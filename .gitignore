@@ -1,0 +1,25 @@
+# OSX
+.DS_Store
+._*
+.Spotlight-V100
+.Trashes
+
+# Vim
+.*.sw[a-z]
+*.un~
+Session.vim
+
+# Python
+env
+dist
+build
+docs/_build
+docs/_apidoc
+__pycache__
+*.egg-info
+.hypothesis
+.tox
+.coverage
+coverage.*
+*,cover
+htmlcov

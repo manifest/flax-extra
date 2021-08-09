@@ -1,0 +1,72 @@
+name: Check
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+
+
+jobs:
+  check:
+
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        python-version: [3.9]
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v2
+        with:
+          python-version: ${{ matrix.python-version }}
+
+      - name: Update Pip
+        run: pip install -U pip wheel
+
+      - name: Check typing
+        run: |
+          pip install mypy
+          mypy --install-types --non-interactive "src"
+          if [[ -f "mypy.ini" ]]; then
+            export OPTIONS=(--config-file "mypy.ini")
+          else
+            export OPTIONS=(--strict)
+          fi
+          mypy "${OPTIONS[@]}" "src"
+        # Use a config file `mypy.ini` if presented, or fall to strict mode otherwise.
+
+      - name: Check code syntax
+        run: |
+          pip install pylint
+          pylint -d fixme --output-format=colorized "src"
+        # TODO, FIXME, and other similar warnings are disabled.
+
+      - name: Check code style
+        run: |
+          pip install black
+          black --check --diff -- "src" "tests"
+        # Check source and tests directories.
+
+      - name: Run tests
+        run: |
+          pip install tox
+          export REPOSITORY=${{ github.repository }}
+          export PROJECT=$(basename ${REPOSITORY/-/_})
+          tox -e py
+        # Infer project directory from the repository name.
+
+      - name: Upload coverage to Codecov
+        uses: codecov/codecov-action@v2
+        with:
+          files: ./coverage.xml
+          fail_ci_if_error: true
+
+      - name: Check tests in docs
+        run: |
+          sudo apt-get -y install pandoc
+          pip install .[docs]
+          sphinx-build -M doctest "docs" "docs/_build"

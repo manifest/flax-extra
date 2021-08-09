@@ -1,0 +1,21 @@
+# Read the Docs configuration file.
+# https://docs.readthedocs.io/en/stable/config-file/v2.html
+
+version: 2
+
+sphinx:
+  builder: htmldir
+  configuration: docs/conf.py
+
+build:
+  image: testing
+  apt_packages:
+    - pandoc
+
+python:
+  version: 3.9
+  install:
+    - method: pip
+      path: .
+      extra_requirements:
+        - docs
