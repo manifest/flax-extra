@@ -27,30 +27,6 @@ jobs:
       - name: Update Pip
         run: pip install -U pip wheel
 
-      - name: Check typing
-        run: |
-          pip install mypy
-          mypy --install-types --non-interactive "src"
-          if [[ -f "mypy.ini" ]]; then
-            export OPTIONS=(--config-file "mypy.ini")
-          else
-            export OPTIONS=(--strict)
-          fi
-          mypy "${OPTIONS[@]}" "src"
-        # Use a config file `mypy.ini` if presented, or fall to strict mode otherwise.
-
-      - name: Check code syntax
-        run: |
-          pip install pylint
-          pylint -d fixme --output-format=colorized "src"
-        # TODO, FIXME, and other similar warnings are disabled.
-
-      - name: Check code style
-        run: |
-          pip install black
-          black --check --diff -- "src" "tests"
-        # Check source and tests directories.
-
       - name: Run tests
         run: |
           pip install tox
@@ -64,6 +40,31 @@ jobs:
         with:
           files: ./coverage.xml
           fail_ci_if_error: true
+
+      - name: Check typing
+        run: |
+          pip install mypy
+          mypy --install-types --non-interactive "src"
+          if [[ -f "mypy.ini" ]]; then
+            export OPTIONS=(--config-file "mypy.ini")
+          else
+            export OPTIONS=(--strict)
+          fi
+          mypy "${OPTIONS[@]}" "src"
+        # Use a config file `mypy.ini` if presented, or fall to strict mode otherwise.
+
+      - name: Check code style
+        run: |
+          pip install black
+          black --check --diff -- "src" "tests"
+        # Check source and tests directories.
+
+      - name: Check code syntax
+        run: |
+          pip install pylint
+          pip install -e .
+          pylint -d fixme --output-format=colorized "src"
+        # TODO, FIXME, and other similar warnings are disabled.
 
       - name: Check tests in docs
         run: |
