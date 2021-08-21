@@ -63,7 +63,7 @@ jobs:
         run: |
           pip install pylint
           pip install -e .
-          pylint -d fixme --output-format=colorized "src"
+          pylint -d fixme --unsafe-load-any-extension=y --output-format=colorized "src"
         # TODO, FIXME, and other similar warnings are disabled.
 
       - name: Check tests in docs
