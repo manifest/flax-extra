@@ -1,11 +1,20 @@
 """Random number generation."""
 
-from typing import List, Mapping, Generator, Union
+from typing import List, Mapping, Generator, Optional, Union
+import jax
 from jax import random, numpy as jnp
 
 
 Array = jnp.ndarray
 Sequence = Generator[Array, None, None]
+
+
+def split_per_device(key: Array, n_devices: Optional[int] = None) -> Array:
+    """Splits a random number generator key according to the number of devices."""
+    if n_devices is None:
+        n_devices = jax.local_device_count()
+
+    return jax.random.split(key, num=n_devices)
 
 
 def into_collection(key: Array, labels: List[str]) -> Mapping[str, Array]:
