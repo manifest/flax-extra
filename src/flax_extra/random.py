@@ -4,10 +4,11 @@ from typing import List, Mapping, Generator, Union
 from jax import random, numpy as jnp
 
 
-Sequence = Generator[jnp.ndarray, None, None]
+Array = jnp.ndarray
+Sequence = Generator[Array, None, None]
 
 
-def into_collection(key: jnp.ndarray, labels: List[str]) -> Mapping[str, jnp.ndarray]:
+def into_collection(key: Array, labels: List[str]) -> Mapping[str, Array]:
     """Splits a random number generator key into a few.
     New keys are associated with provided collection labels.
 
@@ -23,7 +24,7 @@ def into_collection(key: jnp.ndarray, labels: List[str]) -> Mapping[str, jnp.nda
     return keys
 
 
-def into_sequence(key: jnp.ndarray) -> Sequence:
+def into_sequence(key: Array) -> Sequence:
     """Creates a generator of random number generator keys.
 
     Args:
