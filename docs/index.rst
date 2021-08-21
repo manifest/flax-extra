@@ -5,7 +5,9 @@ Getting started
    :maxdepth: 2
    :caption: Tutorials
 
-   notebooks/intro
+   notebooks/training
+   notebooks/losses
+   notebooks/combinators
    Introduction to Redex <https://redex.readthedocs.io/en/latest/notebooks/intro/#Introduction-to-Redex>
    Introduction to Flax <https://flax.readthedocs.io/en/latest/overview.html>
 
