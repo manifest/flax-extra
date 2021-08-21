@@ -27,6 +27,7 @@ class LSTM(nn.Module):
     """depth of a hidden state. LSTM has (output state and cell state)."""
 
     @nn.compact
+    # pylint: disable=arguments-differ
     def __call__(self, inputs: Array) -> Array:
         return cb.serial(
             cb.branch(self.initial_state, op.identity),

@@ -30,6 +30,7 @@ class RNNLM(nn.Module):
         or not."""
 
     @nn.compact
+    # pylint: disable=arguments-differ
     def __call__(self, inputs: Array) -> Array:
         return cb.serial(
             xp.ShiftRight(axis=1),
