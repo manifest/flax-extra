@@ -83,6 +83,7 @@ class TrainTask:
     Targets may be represented as an empty tuple.
 
     Following forms are acceptable:
+
     - `(x, y)`
     - `((x,...), (y,...))`
     - `((x,...), ())`
@@ -173,8 +174,11 @@ class TrainLoop:
 
         Args:
             init: an init function of the model (linen module) or an
-                instance of `CheckpointFileReader` to initialize the
+                instance of :class:`CheckpointFileReader` to initialize the
                 training loop from a checkpoint stored on file system.
+                If :class:`CheckpointFileReader` is specified, but checkpoint
+                file isn't available, an initial checkpoint at step 0
+                will be used.
             task: a discription of a training task.
             rnkey: a random number generator key.
             input_sample: a sigle batched training example. If `None`,
@@ -230,17 +234,18 @@ class TrainLoop:
         )
         if use_checkpoint_file:
             checkpoint_loading_start_time = time.time()
-            maybe_checkpoint_file = init(initializer=initializer)
+            loaded_checkpoint_file = init(initializer=initializer)
             ## If the checkpoint file exists – use it as an initializer,
             ## otherwise fall back to an initial checkpoint at step 0.
-            initializer = maybe_checkpoint_file
             checkpoint_loading_elapsed_time = (
                 time.time() - checkpoint_loading_start_time
             )
-            console.log(
-                f"A checkpoint was loaded in {checkpoint_loading_elapsed_time:.2f} seconds.",
-                stdout=stdout,
-            )
+            if id(initializer) != id(loaded_checkpoint_file):
+                initializer = loaded_checkpoint_file
+                console.log(
+                    f"A checkpoint was loaded in {checkpoint_loading_elapsed_time:.2f} seconds.",
+                    stdout=stdout,
+                )
         initialization_elapsed_time = time.time() - initialization_start_time
         console.log(
             f"Total model initialization time is {initialization_elapsed_time:.2f} seconds.",
