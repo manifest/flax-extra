@@ -3,12 +3,13 @@ from setuptools import setup
 from setuptools import find_packages
 
 PROJECT = "flax-extra"
+PROJECT_DIR = f"src/{PROJECT.replace('-','_')}"
 REPOSITORY = f"manifest/{PROJECT}"
 README = (Path(__file__).parent / "README.md").read_text()
 
 # Setup project version.
 __version__ = None
-with open(f"src/{PROJECT.replace('-','_')}/version.py") as file:
+with open(f"{PROJECT_DIR}/version.py") as file:
     exec(file.read(), globals())
 
 # Setup keywords.
@@ -19,7 +20,7 @@ setup(
     author="Andrei Nesterov",
     author_email="ae.nesterov@gmail.com",
     url=f"https://github.com/{REPOSITORY}",
-    description="Layers and models built with Flax",
+    description="The package provides extra flexibility to Flax using ideas originated at Trax",
     long_description=README,
     long_description_content_type="text/markdown",
     project_urls={
@@ -38,7 +39,7 @@ setup(
     ],
     # Required for mypy to find the installed package.
     zip_safe=False,
-    package_data={f"src/{PROJECT}": ["py.typed"]},
+    package_data={PROJECT_DIR: ["py.typed"]},
     packages=find_packages(where="src"),
     package_dir={"": "src"},
     python_requires=">=3.9",
@@ -47,6 +48,8 @@ setup(
         # f"redex @ file://localhost//{Path('../redex').resolve()}#egg=redex",
         "redex",
         "flax",
+        # Required by `flax.training.checkpoints`
+        "tensorflow",
     ],
     extras_require={
         "docs": ["sphinx", "furo", "nbsphinx", "ipykernel"],
