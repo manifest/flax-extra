@@ -49,7 +49,7 @@ class CheckpointFileWriter:
 
         Args:
             checkpoint: a checkpoint to write.
-            prefix: a prefix that will be added the output file name.
+            prefix: a string that will be added to the output file name.
 
         Returns:
             an original checkpoint.
