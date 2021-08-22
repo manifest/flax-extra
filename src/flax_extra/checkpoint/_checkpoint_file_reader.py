@@ -1,41 +1,9 @@
-"""File format and operations for checkpoints."""
+"""Reading checkpoints from the local file system."""
 
-import typing
 from typing import Any, Callable, Mapping, Optional, Union
 from dataclasses import dataclass
-from flax.core.frozen_dict import FrozenDict
-from flax.struct import PyTreeNode, TNode
 from flax.training import checkpoints
-import optax
-
-# pylint: disable=too-few-public-methods
-class CheckpointFile(PyTreeNode):
-    """A file format for the checkpoint."""
-
-    model_params: FrozenDict
-    """parameters of the model at the checkpoint."""
-
-    model_state: FrozenDict
-    """a state of the model at the checkpoint."""
-
-    optimizer_state: optax.OptState
-    """a state of the optimizer at the checkpoint."""
-
-    step: int
-    """a step number this checkpoint was occured."""
-
-    version: int = 0
-    """the file format version."""
-
-    if typing.TYPE_CHECKING:
-
-        def __init__(self, *args: Any, **kwargs: Any) -> None:
-            # This stub informs a type checker that this method is overridden.
-            super().__init__()
-
-        def replace(self: TNode, **overrides: Any) -> TNode:
-            # This stub informs a type checker that this method is overridden.
-            pass
+from flax_extra.checkpoint._checkpoint_file import CheckpointFile
 
 
 @dataclass

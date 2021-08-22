@@ -1,4 +1,4 @@
-"""The checkpoint representation."""
+"""A representation of the training state."""
 
 from dataclasses import dataclass
 from flax.core.frozen_dict import FrozenDict
@@ -8,7 +8,7 @@ import optax
 # pylint: disable=too-many-instance-attributes
 @dataclass
 class Checkpoint:
-    """A representation of a training state at particular recurrent step."""
+    """A representation of the training state at particular recurrent step."""
 
     model_params: FrozenDict
     """parameters of the model at the checkpoint."""
