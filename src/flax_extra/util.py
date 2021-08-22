@@ -16,7 +16,7 @@ def originate(tree: ArrayTree) -> ArrayTree:
     the first replica of the replicated pytree.
 
     Args:
-        inputs: replicated pytree.
+        tree: replicated pytree.
 
     Returns:
         a regular pytree.

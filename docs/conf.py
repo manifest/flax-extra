@@ -17,7 +17,7 @@ from importlib import metadata
 
 DOCS_DIR = Path(".").resolve()
 SRC_DIR = Path("../src").resolve()
-sys.path.insert(0, SRC_DIR)
+sys.path.insert(0, str(SRC_DIR))
 
 
 # -- Project information -----------------------------------------------------

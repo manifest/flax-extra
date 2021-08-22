@@ -1,4 +1,4 @@
-"""Training loop types."""
+"""Training models."""
 
 from typing import (
     Any,
@@ -22,7 +22,7 @@ import redex
 from flax.core.scope import CollectionFilter, DenyList
 from flax.core.frozen_dict import FrozenDict
 import optax
-from flax_extra import random, console
+from flax_extra import console, random
 from flax_extra.batch import (
     normalize_batch,
     normalize_batch_per_device,
@@ -60,10 +60,10 @@ BYTE_UNITS: Final[List[str]] = ["B", "kB", "MB", "GB", "TB", "PB", "EB", "ZB", "
 
 @dataclass
 class TrainTask:
-    """A discription of a training task."""
+    """The training task describes how to train a model."""
 
     apply: Callable[..., Any]
-    """an apply function of the model (linen module)."""
+    """an apply function of the model (a linen module)."""
 
     optimizer: optax.GradientTransformation
     """an optimizer."""
@@ -78,23 +78,27 @@ class TrainTask:
     data: DataStream
     """a data stream of training examples.
 
-    Item, yielded by the stream, must be a tuple of two parameters
-    `tuple[Inputs, Targets]`, where `Inputs` and `Targets` get
-    normalized to form `((x,...), (y,...))`.
+    An item, yielded by the data stream, must consist of inputs and targets.
+    Each of them may be represented as a single array or multiple arrays.
+    Targets may be represented as an empty tuple.
 
-    - Inputs `(x,...)` get passed to the apply function of the model
-        `model.apply(x,...)`.
-    - Targets `(y,...)` along with the model outputs `(o,...)`
-        get passed to the loss function `loss(o,...,y,...)`.
-        Targets could be an empty tuple to support unsupervised
-        learning.
+    Following forms are acceptable:
+    - `(x, y)`
+    - `((x,...), (y,...))`
+    - `((x,...), ())`
+    - etc.
+
+    Inputs get passed to model's `apply(x,...)` function as arguments.
+
+    Targets along with model outputs, `(o,...)`, get passed to a
+    `loss(o,...,y,...)` function as arguments.
     """
 
 
 @dataclass
 class TrainTaskRunner:
-    """A training task runner holds everything (e.g. optimizer state,
-    data generator, etc.) required for training the model on a single task."""
+    """The training task runner holds everything required for training
+    the model on a single task (e.g. data generator, optimizer state, etc.)."""
 
     update: UpdateFn
     """a function performing update of the model parameters."""
