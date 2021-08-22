@@ -36,6 +36,7 @@ class EvalTask:
     Targets may be represented as an empty tuple.
 
     Following forms are acceptable:
+
     - `(x, y)`
     - `((x,...), (y,...))`
     - `((x,...), ())`

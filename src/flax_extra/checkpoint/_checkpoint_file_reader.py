@@ -4,6 +4,7 @@ from typing import Any, Callable, Mapping, Optional, Union
 from dataclasses import dataclass
 from flax.training import checkpoints
 from flax_extra.checkpoint._checkpoint_file import CheckpointFile
+from flax_extra.checkpoint._checkpoint_file_writer import regular_checkpoint_prefix
 
 
 @dataclass
@@ -31,6 +32,9 @@ class CheckpointFileReader:
 
         Returns:
             either the loaded checkpoint file or initial checkpoint.
+
+        Raises:
+            TypeError: if the initializer is not of the :class:`Checkpoint` type.
         """
         return self.read(initializer)  # type: ignore
 
@@ -53,6 +57,9 @@ class CheckpointFileReader:
 
         Returns:
             either the loaded checkpoint file or initial checkpoint.
+
+        Raises:
+            TypeError: if the initializer is not of the :class:`Checkpoint` type.
         """
         if initializer and not isinstance(initializer, CheckpointFile):
             raise TypeError(
@@ -62,14 +69,10 @@ class CheckpointFileReader:
             )
 
         if prefix is None:
-            prefix = _regular_checkpoint_prefix()
+            prefix = regular_checkpoint_prefix()
 
         return checkpoints.restore_checkpoint(  # type:ignore
             self.dir,
             target=initializer,
             prefix=prefix,
         )
-
-
-def _regular_checkpoint_prefix() -> str:
-    return "regular_"
