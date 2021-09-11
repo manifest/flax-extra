@@ -110,7 +110,7 @@ class TrainTaskRunner:
     data_generator: DataStream
     """a data stream of training examples."""
 
-    randnumkey_generator: random.Sequence
+    randnumkey_generator: random.KeyGenerator
     """a random number key generator."""
 
     n_devices: int

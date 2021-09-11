@@ -6,10 +6,11 @@ from jax import random, numpy as jnp
 
 
 Array = jnp.ndarray
-Sequence = Generator[Array, None, None]
+KeyArray = Array
+KeyGenerator = Generator[KeyArray, None, None]
 
 
-def split_per_device(key: Array, n_devices: Optional[int] = None) -> Array:
+def split_per_device(key: KeyArray, n_devices: Optional[int] = None) -> KeyArray:
     """Splits a random number generator key according to the number of devices."""
     if n_devices is None:
         n_devices = jax.local_device_count()
@@ -17,7 +18,7 @@ def split_per_device(key: Array, n_devices: Optional[int] = None) -> Array:
     return jax.random.split(key, num=n_devices)
 
 
-def into_collection(key: Array, labels: List[str]) -> Mapping[str, Array]:
+def into_collection(key: KeyArray, labels: List[str]) -> Mapping[str, KeyArray]:
     """Splits a random number generator key into a few.
     New keys are associated with provided collection labels.
 
@@ -33,7 +34,7 @@ def into_collection(key: Array, labels: List[str]) -> Mapping[str, Array]:
     return keys
 
 
-def into_sequence(key: Array) -> Sequence:
+def into_sequence(key: KeyArray) -> KeyGenerator:
     """Creates a generator of random number generator keys.
 
     Args:
@@ -48,7 +49,7 @@ def into_sequence(key: Array) -> Sequence:
         yield key
 
 
-def sequence(seed: int, num: int = 1) -> Union[Sequence, List[Sequence]]:
+def sequence(seed: int, num: int = 1) -> Union[KeyGenerator, List[KeyGenerator]]:
     """Creates generators of random number generator keys.
 
     .. code-block:: python
