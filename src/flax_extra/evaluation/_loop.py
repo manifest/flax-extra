@@ -60,7 +60,7 @@ class EvalTaskRunner:
     data_generator: DataStream
     """a data stream of evaluation examples."""
 
-    randnumkey_generator: random.Sequence
+    randnumkey_generator: random.KeyGenerator
     """a random number key generator."""
 
     n_devices: int
