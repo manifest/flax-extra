@@ -6,6 +6,15 @@ from flax_extra import combinator as cb
 
 
 class ConcatenateTest(unittest.TestCase):
+    def test_signature(self):
+        concatenate = cb.concatenate()
+        self.assertEqual(concatenate.signature.n_in, 2)
+        self.assertEqual(concatenate.signature.n_out, 1)
+        self.assertEqual(
+            concatenate.signature.in_shape,
+            ((), ()),
+        )
+
     def test_default(self):
         concatenate = cb.concatenate()
         np.testing.assert_array_equal(
