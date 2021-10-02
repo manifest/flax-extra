@@ -26,8 +26,7 @@ class RNNLM(nn.Module):
     """a type of the RNN."""
 
     deterministic: bool = True
-    """the flag specifies whether the model must perform deterministically
-        or not."""
+    """whether to perform deterministically or not."""
 
     @nn.compact
     # pylint: disable=arguments-differ
