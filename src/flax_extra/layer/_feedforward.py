@@ -3,9 +3,9 @@
 from typing import Any, Callable, Iterable
 import jax
 from jax import numpy as jnp
+from jax.random import KeyArray
 from redex import combinator as cb
 from flax import linen as nn
-from flax_extra.random import KeyArray
 
 Array = jnp.ndarray
 Shape = Iterable[int]
@@ -27,16 +27,19 @@ class FeedForward(nn.Module):
     """a weights initializer."""
 
     @nn.compact
-    def __call__(self, inputs: Array) -> Array:
+    # pylint: disable=arguments-differ
+    def __call__(self, inputs: Array) -> Array:  # type: ignore[override]
         d_output = inputs.shape[-1]
-        return cb.serial(  # type: ignore
+        return cb.serial(
             nn.Dense(
                 features=self.widening_factor * d_output,
-                kernel_init=self.kernel_init,
+                kernel_init=self.kernel_init,  # type: ignore
             ),
             self.activation,
             nn.Dense(
                 features=d_output,
-                kernel_init=self.kernel_init,
+                kernel_init=self.kernel_init,  # type: ignore
             ),
-        )(inputs)
+        )(
+            inputs,  # type: ignore
+        )

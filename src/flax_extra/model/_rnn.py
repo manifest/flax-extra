@@ -1,5 +1,6 @@
 """RNN models."""
 
+from typing import Type
 from flax import linen as nn
 from flax.linen.recurrent import Array
 from redex import combinator as cb
@@ -22,7 +23,7 @@ class RNNLM(nn.Module):
     dropout_rate: float = 0.1
     """dropout rate (how much to drop out)."""
 
-    rnn_type: nn.Module = xn.LSTM
+    rnn_type: Type[nn.Module] = xn.LSTM
     """a type of the RNN."""
 
     deterministic: bool = True
@@ -30,7 +31,7 @@ class RNNLM(nn.Module):
 
     @nn.compact
     # pylint: disable=arguments-differ
-    def __call__(self, inputs: Array) -> Array:
+    def __call__(self, inputs: Array) -> Array:  # type: ignore[override]
         return cb.serial(
             xp.ShiftRight(axis=1),
             nn.Embed(

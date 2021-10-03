@@ -3,10 +3,10 @@
 from typing import List, Mapping, Generator, Optional, Union
 import jax
 from jax import random, numpy as jnp
+from jax.random import KeyArray
 
 
 Array = jnp.ndarray
-KeyArray = Array
 KeyGenerator = Generator[KeyArray, None, None]
 
 

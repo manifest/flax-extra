@@ -1,8 +1,12 @@
 """A representation of the training state."""
 
+from typing import Any
 from dataclasses import dataclass
 from flax.core.frozen_dict import FrozenDict
 import optax
+
+
+FrozenVars = FrozenDict[Any, Any]
 
 
 # pylint: disable=too-many-instance-attributes
@@ -10,16 +14,16 @@ import optax
 class Checkpoint:
     """A representation of the training state at particular recurrent step."""
 
-    model_params: FrozenDict
+    model_params: FrozenVars
     """parameters of the model at the checkpoint."""
 
-    model_state: FrozenDict
+    model_state: FrozenVars
     """a state of the model at the checkpoint."""
 
     optimizer_state: optax.OptState
     """a state of the optimizer at the checkpoint."""
 
-    grads: FrozenDict
+    grads: FrozenVars
     """gradients at the checkpoint."""
 
     loss: float

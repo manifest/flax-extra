@@ -5,6 +5,7 @@ from functools import partial
 from dataclasses import dataclass
 import jax
 from jax import numpy as jnp
+from jax.random import KeyArray
 import redex
 from flax.core.frozen_dict import FrozenDict
 from flax_extra import random, util
@@ -13,9 +14,10 @@ from flax_extra.checkpoint import Checkpoint, Metrics, Summary
 
 Array = jnp.ndarray
 ArrayTree = Any
+FrozenVars = FrozenDict[Any, Any]
 MetricSpecs = Mapping[str, Callable[..., float]]
 
-EvaluationFn = Callable[[FrozenDict, FrozenDict, Batch, Array], Metrics]
+EvaluationFn = Callable[[FrozenVars, FrozenVars, Batch, KeyArray], Metrics]
 
 
 @dataclass
@@ -68,8 +70,8 @@ class EvalTaskRunner:
 
     def run(
         self,
-        model_params: FrozenDict,
-        model_state: FrozenDict,
+        model_params: FrozenVars,
+        model_state: FrozenVars,
     ) -> Metrics:
         """Runs a single evaluation step.
 
@@ -106,7 +108,7 @@ class EvalLoop:
     def __init__(
         self,
         task: EvalTask,
-        rnkey: Array,
+        rnkey: KeyArray,
         n_steps: int = 1,
         collections: Optional[Mapping[str, List[str]]] = None,
         n_devices: Optional[int] = None,
@@ -232,10 +234,10 @@ def _setup_evaluation(
     apply = partial(apply, mutable=False)
 
     def evaluation(
-        params: FrozenDict,
-        state: FrozenDict,
+        params: FrozenVars,
+        state: FrozenVars,
         batch: Batch,
-        rngkey: Array,
+        rngkey: KeyArray,
     ) -> Metrics:
         rngkeys = random.into_collection(key=rngkey, labels=collections)
         variables = {"params": params, **state}
@@ -245,7 +247,7 @@ def _setup_evaluation(
         outputs = apply(variables, *inputs, rngs=rngkeys)
         outputs = redex.util.expand_to_tuple(outputs)
         metrics = _evaluate(outputs, targets, metric_specs)
-        averaged_metrics = jax.lax.pmean(metrics, axis_name="replica")  # type: ignore
+        averaged_metrics = jax.lax.pmean(metrics, axis_name="replica")
         return averaged_metrics  # type: ignore
 
     return jax.pmap(evaluation, axis_name="replica", donate_argnums=(2, 3))
