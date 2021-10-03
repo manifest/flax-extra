@@ -24,7 +24,7 @@ class FeedForward(nn.Module):
     """a nonlinear function."""
 
     kernel_init: InitFn = nn.initializers.lecun_normal()
-    """a weights initializer."""
+    """weights initializer."""
 
     @nn.compact
     # pylint: disable=arguments-differ
