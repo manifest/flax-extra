@@ -21,7 +21,7 @@ class RNNLM(nn.Module):
     """a number of RNN layers."""
 
     dropout_rate: float = 0.1
-    """dropout rate (how much to drop out)."""
+    """probababilistic rate for dropout."""
 
     rnn_type: Type[nn.Module] = xn.LSTM
     """a type of the RNN."""
