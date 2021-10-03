@@ -54,6 +54,8 @@ exclude_patterns = ['_build', 'Thumbs.db', '.DS_Store']
 # Looks for objects in external projects.
 intersphinx_mapping = {
     "redex": ("https://redex.readthedocs.io/en/latest", None),
+    "jax": ("https://jax.readthedocs.io/en/latest", None),
+    "flax": ("https://flax.readthedocs.io/en/latest", None),
 }
 
 
