@@ -8,14 +8,18 @@ from flax.struct import PyTreeNode, TNode
 import optax
 from flax_extra.checkpoint._summary import Metrics
 
+
+FrozenVars = FrozenDict[Any, Any]
+
+
 # pylint: disable=too-few-public-methods
 class CheckpointFile(PyTreeNode):
     """The file format to store checkpoint on the local file system."""
 
-    model_params: FrozenDict
+    model_params: FrozenVars
     """parameters of the model at the checkpoint."""
 
-    model_state: FrozenDict
+    model_state: FrozenVars
     """a state of the model at the checkpoint."""
 
     optimizer_state: optax.OptState

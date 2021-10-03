@@ -1,6 +1,5 @@
 """LSTM layer."""
 
-from redex import operator as op
 from redex import combinator as cb
 from flax import linen as nn
 from flax.linen.recurrent import Array
@@ -11,7 +10,11 @@ LSTMState = tuple[Array, Array]
 class LSTMCell(nn.LSTMCell):
     """LSTM cell."""
 
-    def __call__(self, carry: LSTMState, inputs: Array) -> tuple[LSTMState, Array]:
+    def __call__(  # type: ignore[override]
+        self,
+        carry: LSTMState,
+        inputs: Array,
+    ) -> tuple[LSTMState, Array]:
         # pylint: disable=useless-super-delegation
         return super().__call__(carry, inputs)  # type:ignore
 
@@ -28,9 +31,9 @@ class LSTM(nn.Module):
 
     @nn.compact
     # pylint: disable=arguments-differ
-    def __call__(self, inputs: Array) -> Array:
+    def __call__(self, inputs: Array) -> Array:  # type: ignore[override]
         return cb.serial(
-            cb.branch(self.initial_state, op.identity),
+            cb.branch(self.initial_state, cb.identity(n_in=1)),
             nn.scan(
                 LSTMCell,
                 variable_broadcast="params",

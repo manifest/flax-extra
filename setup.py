@@ -2,14 +2,17 @@ from pathlib import Path
 from setuptools import setup
 from setuptools import find_packages
 
+def normalized(name: str) -> str:
+    return name.replace("-", "_")
+
 PROJECT = "flax-extra"
-PROJECT_DIR = f"src/{PROJECT.replace('-','_')}"
+PROJECT_DIR = f"src/{normalized(PROJECT)}"
 REPOSITORY = f"manifest/{PROJECT}"
 README = (Path(__file__).parent / "README.md").read_text()
 
 # Setup project version.
 __version__ = None
-with open(f"{PROJECT_DIR}/version.py") as file:
+with open(f"{normalized(PROJECT_DIR)}/version.py") as file:
     exec(file.read(), globals())
 
 # Setup keywords.
@@ -38,21 +41,22 @@ setup(
         "Typing :: Typed",
     ],
     # Required for mypy to find the installed package.
-    zip_safe=False,
-    package_data={PROJECT_DIR: ["py.typed"]},
     packages=find_packages(where="src"),
     package_dir={"": "src"},
+    package_data={normalized(PROJECT): ["py.typed"]},
+    zip_safe=False,
     python_requires=">=3.9",
     install_requires=[
         # Uncomment for local development.
         # f"redex @ file://localhost//{Path('../redex').resolve()}#egg=redex",
-        "redex",
-        "flax",
+        "redex>=0.1",
+        "flax>=0.3",
+        "einops>=0.3",
         # Required by `flax.training.checkpoints`
-        "tensorflow",
+        "tensorflow>=2.6",
     ],
     extras_require={
         "docs": ["sphinx", "furo", "nbsphinx", "ipykernel"],
-        "development": ["numpy", "pylint"],
+        "development": ["numpy", "pylint==2.10"],
     },
 )

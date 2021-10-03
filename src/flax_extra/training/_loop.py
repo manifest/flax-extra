@@ -17,6 +17,7 @@ import math
 import time
 import jax
 from jax import numpy as jnp
+from jax.random import KeyArray
 from jax.interpreters.xla import Device
 import redex
 from flax.core.scope import CollectionFilter, DenyList
@@ -34,23 +35,24 @@ from flax_extra.batch import (
 from flax_extra.checkpoint import Checkpoint, CheckpointFile, CheckpointFileReader
 
 Array = jnp.ndarray
+FrozenVars = FrozenDict[Any, Any]
 
-InitializationFnResult = tuple[FrozenDict, FrozenDict]
+InitializationFnResult = tuple[FrozenVars, FrozenVars]
 InitializationFn = Callable[
-    [Array, Inputs],
+    [KeyArray, Inputs],
     InitializationFnResult,
 ]
 
 ForwardPropagationFnResult = tuple[float, optax.OptState]
-ForwardBackwardPropagationFnResult = tuple[ForwardPropagationFnResult, FrozenDict]
+ForwardBackwardPropagationFnResult = tuple[ForwardPropagationFnResult, FrozenVars]
 ForwardBackwardPropagationFn = Callable[
-    [FrozenDict, FrozenDict, Batch, Array],
+    [FrozenVars, FrozenVars, Batch, Array],
     ForwardBackwardPropagationFnResult,
 ]
 
-UpdateFnResult = tuple[optax.OptState, FrozenDict, FrozenDict, FrozenDict, float]
+UpdateFnResult = tuple[optax.OptState, FrozenVars, FrozenVars, FrozenVars, float]
 UpdateFn = Callable[
-    [optax.OptState, FrozenDict, FrozenDict, Batch, Array],
+    [optax.OptState, FrozenVars, FrozenVars, Batch, KeyArray],
     UpdateFnResult,
 ]
 
@@ -118,9 +120,9 @@ class TrainTaskRunner:
 
     def run(
         self,
-        model_params: FrozenDict,
-        model_state: FrozenDict,
-    ) -> tuple[FrozenDict, FrozenDict, FrozenDict, float]:
+        model_params: FrozenVars,
+        model_state: FrozenVars,
+    ) -> tuple[FrozenVars, FrozenVars, FrozenVars, float]:
         """Runs a single training step and updates the optimizer state.
 
         Args:
@@ -141,7 +143,8 @@ class TrainTaskRunner:
             model_state,
             batch,
             random.split_per_device(
-                key=next(self.randnumkey_generator), n_devices=self.n_devices
+                key=next(self.randnumkey_generator),
+                n_devices=self.n_devices,
             ),
         )
 
@@ -161,7 +164,7 @@ class TrainLoop:
         self,
         init: Union[Callable[..., Any], CheckpointFileReader],
         task: TrainTask,
-        rnkey: Array,
+        rnkey: KeyArray,
         input_sample: Optional[UnnormalizedInputs] = None,
         n_steps_per_checkpoint: int = 1,
         n_steps: int = 0,
@@ -451,7 +454,7 @@ def _next_checkpoint_step(current_step: int, n_steps_per_checkpoint: int) -> int
     )
 
 
-def _params_total_size(params: FrozenDict) -> int:
+def _params_total_size(params: FrozenVars) -> int:
     """Computes the total number of model parameters.
 
     Args:
@@ -467,7 +470,7 @@ def _params_total_size(params: FrozenDict) -> int:
     return jax.tree_util.tree_reduce(count, params, 0)
 
 
-def _params_total_bytes(params: FrozenDict) -> int:
+def _params_total_bytes(params: FrozenVars) -> int:
     """Conputes the total byte size of model parameters.
 
     Args:
@@ -511,7 +514,7 @@ def _setup_initialization(
     init = partial(init, mutable=mutable_collections)
 
     def initialization(
-        rngkey: Array,
+        rngkey: KeyArray,
         inputs: Inputs,
     ) -> InitializationFnResult:
         rngkeys = random.into_collection(key=rngkey, labels=collections)
@@ -532,10 +535,10 @@ def _setup_forward_backward_propagation(
     apply = partial(apply, mutable=mutable_collections)
 
     def forward_propagation(
-        params: FrozenDict,
-        state: FrozenDict,
+        params: FrozenVars,
+        state: FrozenVars,
         batch: Batch,
-        rngkey: Array,
+        rngkey: KeyArray,
     ) -> ForwardPropagationFnResult:
         rngkeys = random.into_collection(key=rngkey, labels=collections)
         variables = {"params": params, **state}
@@ -559,10 +562,10 @@ def _setup_update(
 ) -> UpdateFn:
     def update(
         optimizer_state: optax.OptState,
-        model_params: FrozenDict,
-        model_state: FrozenDict,
+        model_params: FrozenVars,
+        model_state: FrozenVars,
         batch: Batch,
-        rngkey: Array,
+        rngkey: KeyArray,
     ) -> UpdateFnResult:
         (loss, state_diff), grads = forward_backward_propagation(
             model_params,
@@ -571,18 +574,18 @@ def _setup_update(
             rngkey,
         )
 
-        averaged_loss = jax.lax.pmean(loss, axis_name="replica")  # type: ignore
-        averaged_grads = jax.lax.pmean(grads, axis_name="replica")  # type: ignore
+        averaged_loss = jax.lax.pmean(loss, axis_name="replica")
+        averaged_grads = jax.lax.pmean(grads, axis_name="replica")
         ## TODO: It's not clear what may be in the model state,
         ## but we need to aggregate it in some way.
-        averaged_state_diff = jax.lax.pmean(state_diff, axis_name="replica")  # type: ignore
+        averaged_state_diff = jax.lax.pmean(state_diff, axis_name="replica")
         param_updates, updated_optimizer_state = optimizer.update(
             averaged_grads,
             optimizer_state,
         )
         updated_model_params = optax.apply_updates(model_params, param_updates)
         updated_model_state = {**model_state, **averaged_state_diff}
-        return (
+        return (  # type: ignore
             updated_optimizer_state,
             updated_model_params,
             updated_model_state,
