@@ -1,14 +1,15 @@
 """FeedForward layer."""
 
-from typing import Any, Callable, Iterable
+from typing import Any, Callable, Sequence, Optional, Union
 import jax
 from jax import numpy as jnp
+from jax.core import NamedShape
 from jax.random import KeyArray
 from redex import combinator as cb
 from flax import linen as nn
 
 Array = jnp.ndarray
-Shape = Iterable[int]
+Shape = Optional[Union[Sequence[int], NamedShape]]
 Dtype = Any
 InitFn = Callable[[KeyArray, Shape, Dtype], Array]
 
