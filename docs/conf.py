@@ -58,6 +58,17 @@ intersphinx_mapping = {
     "flax": ("https://flax.readthedocs.io/en/latest", None),
 }
 
+# "\\dv": "\\dfrac{\\delta}{ \\delta{#2} } {#1}"
+
+MATHJAX_COMMANDS = dict(
+    sR="\\mathbb{R}",
+    sN="\\mathbb{N}",
+    nBatchSize="m",
+    nSeqLen="T",
+    # sRN=["\\mathbb{R}^{#1}", 1],
+)
+mathjax3_config = dict(tex=dict(macros=MATHJAX_COMMANDS))
+
 
 # -- Options for HTML output -------------------------------------------------
 
