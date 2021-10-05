@@ -1,4 +1,4 @@
-"""Random number generation."""
+r"""Random number generation."""
 
 from typing import List, Mapping, Generator, Optional, Union
 import jax
@@ -11,7 +11,7 @@ KeyGenerator = Generator[KeyArray, None, None]
 
 
 def split_per_device(key: KeyArray, n_devices: Optional[int] = None) -> KeyArray:
-    """Splits a random number generator key according to the number of devices."""
+    r"""Splits a random number generator key according to the number of devices."""
     if n_devices is None:
         n_devices = jax.local_device_count()
 
@@ -19,7 +19,7 @@ def split_per_device(key: KeyArray, n_devices: Optional[int] = None) -> KeyArray
 
 
 def into_collection(key: KeyArray, labels: List[str]) -> Mapping[str, KeyArray]:
-    """Splits a random number generator key into a few.
+    r"""Splits a random number generator key into a few.
     New keys are associated with provided collection labels.
 
     Args:
@@ -35,7 +35,7 @@ def into_collection(key: KeyArray, labels: List[str]) -> Mapping[str, KeyArray]:
 
 
 def into_sequence(key: KeyArray) -> KeyGenerator:
-    """Creates a generator of random number generator keys.
+    r"""Creates a generator of random number generator keys.
 
     Args:
         key: an initial generator key.
@@ -50,7 +50,7 @@ def into_sequence(key: KeyArray) -> KeyGenerator:
 
 
 def sequence(seed: int, num: int = 1) -> Union[KeyGenerator, List[KeyGenerator]]:
-    """Creates generators of random number generator keys.
+    r"""Creates generators of random number generator keys.
 
     .. code-block:: python
 

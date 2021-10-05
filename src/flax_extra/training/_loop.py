@@ -1,4 +1,4 @@
-"""Training models."""
+r"""Training models."""
 
 from typing import (
     Any,
@@ -62,23 +62,23 @@ BYTE_UNITS: Final[List[str]] = ["B", "kB", "MB", "GB", "TB", "PB", "EB", "ZB", "
 
 @dataclass
 class TrainTask:
-    """The training task describes how to train a model."""
+    r"""The training task describes how to train a model."""
 
     apply: Callable[..., Any]
-    """an apply function of the model (a linen module)."""
+    r"""an apply function of the model (a linen module)."""
 
     optimizer: optax.GradientTransformation
-    """an optimizer."""
+    r"""an optimizer."""
 
     loss: Callable[..., float]
-    """a loss function.
+    r"""a loss function.
 
     The function must accept as input arguments all
     model outputs and targets.
     """
 
     data: DataStream
-    """a data stream of training examples.
+    r"""a data stream of training examples.
 
     An item, yielded by the data stream, must consist of inputs and targets.
     Each of them may be represented as a single array or multiple arrays.
@@ -100,30 +100,30 @@ class TrainTask:
 
 @dataclass
 class TrainTaskRunner:
-    """The training task runner holds everything required for training
+    r"""The training task runner holds everything required for training
     the model on a single task (e.g. data generator, optimizer state, etc.)."""
 
     update: UpdateFn
-    """a function performing update of the model parameters."""
+    r"""a function performing update of the model parameters."""
 
     optimizer_state: optax.OptState
-    """a state of the optimizer."""
+    r"""a state of the optimizer."""
 
     data_generator: DataStream
-    """a data stream of training examples."""
+    r"""a data stream of training examples."""
 
     randnumkey_generator: random.KeyGenerator
-    """a random number key generator."""
+    r"""a random number key generator."""
 
     n_devices: int
-    """a number of devices to parallelize training."""
+    r"""a number of devices to parallelize training."""
 
     def run(
         self,
         model_params: FrozenVars,
         model_state: FrozenVars,
     ) -> tuple[FrozenVars, FrozenVars, FrozenVars, float]:
-        """Runs a single training step and updates the optimizer state.
+        r"""Runs a single training step and updates the optimizer state.
 
         Args:
             model_params: parameters of the model at the current step.
@@ -156,7 +156,7 @@ class TrainTaskRunner:
 
 
 class TrainLoop:
-    """The training loop updates model parameters and yields checkpoints
+    r"""The training loop updates model parameters and yields checkpoints
     describing training state at specified steps."""
 
     # pylint: disable=too-many-arguments, too-many-locals
@@ -173,7 +173,7 @@ class TrainLoop:
         devices: Optional[List[Device]] = None,
         stdout: bool = True,
     ) -> None:
-        """Initializes the training loop.
+        r"""Initializes the training loop.
 
         Args:
             init: an init function of the model (linen module) or an
@@ -284,27 +284,27 @@ class TrainLoop:
 
     @property
     def step(self) -> int:
-        """the current step."""
+        r"""the current step."""
         return self._step
 
     @property
     def n_steps_per_checkpoint(self) -> int:
-        """a number of steps between checkpoints."""
+        r"""a number of steps between checkpoints."""
         return self._n_steps_per_checkpoint
 
     @n_steps_per_checkpoint.setter
     def n_steps_per_checkpoint(self, value: int) -> None:
-        """updates the number of steps between checkpoints."""
+        r"""updates the number of steps between checkpoints."""
         self._n_steps_per_checkpoint = value
 
     @property
     def n_steps(self) -> int:
-        """the total number of steps in the loop."""
+        r"""the total number of steps in the loop."""
         return self._n_steps
 
     @n_steps.setter
     def n_steps(self, value: int) -> None:
-        """updates the total number of steps in the loop."""
+        r"""updates the total number of steps in the loop."""
         self._n_steps = value
 
     def __iter__(self) -> Iterable[Checkpoint]:
@@ -314,7 +314,7 @@ class TrainLoop:
         return next(self._run(n_steps=self._n_steps))
 
     def next_checkpoint(self) -> Checkpoint:
-        """Runs a number of steps remaining for the next checkpoint.
+        r"""Runs a number of steps remaining for the next checkpoint.
 
         Returns:
             a checkpoint.
@@ -323,7 +323,7 @@ class TrainLoop:
         return next(self._run(n_steps=n_steps))
 
     def next_step(self) -> Checkpoint:
-        """Runs a single step.
+        r"""Runs a single step.
 
         Returns:
             a checkpoint.
@@ -331,7 +331,7 @@ class TrainLoop:
         return next(self._run(n_steps=self._step + 1, n_steps_per_checkpoint=1))
 
     def run(self, n_steps: int) -> Generator[Checkpoint, None, None]:
-        """Runs an arbitrary number of steps yelding checkpoints.
+        r"""Runs an arbitrary number of steps yelding checkpoints.
 
         Args:
             n_steps: a number of steps to ran.
@@ -346,7 +346,7 @@ class TrainLoop:
         n_steps: Optional[int] = None,
         n_steps_per_checkpoint: Optional[int] = None,
     ) -> Generator[Checkpoint, None, None]:
-        """Runs an arbitrary number of steps yelding checkpoints.
+        r"""Runs an arbitrary number of steps yelding checkpoints.
 
         Args:
             n_steps: a number of steps to ran. The `n_steps` property
@@ -426,7 +426,7 @@ class TrainLoop:
         return None
 
     def _is_checkpoint_step(self, n_steps_per_checkpoint: int) -> bool:
-        """Determines whether the current step is a checkpoint step.
+        r"""Determines whether the current step is a checkpoint step.
 
         Args:
             n_steps_per_checkpoint: a number of steps per checkpoint.
@@ -438,7 +438,7 @@ class TrainLoop:
 
 
 def _next_checkpoint_step(current_step: int, n_steps_per_checkpoint: int) -> int:
-    """Computes a step number the next checkpoint will occur.
+    r"""Computes a step number the next checkpoint will occur.
 
     Args:
         current_step: the current step.
@@ -455,7 +455,7 @@ def _next_checkpoint_step(current_step: int, n_steps_per_checkpoint: int) -> int
 
 
 def _params_total_size(params: FrozenVars) -> int:
-    """Computes the total number of model parameters.
+    r"""Computes the total number of model parameters.
 
     Args:
         params: model parameters
@@ -471,7 +471,7 @@ def _params_total_size(params: FrozenVars) -> int:
 
 
 def _params_total_bytes(params: FrozenVars) -> int:
-    """Conputes the total byte size of model parameters.
+    r"""Conputes the total byte size of model parameters.
 
     Args:
         params: model parameters.
@@ -487,7 +487,7 @@ def _params_total_bytes(params: FrozenVars) -> int:
 
 
 def _format_total_bytes(size: int) -> str:
-    """Formats byte size to human readable text format.
+    r"""Formats byte size to human readable text format.
 
     Args:
         size: byte size.

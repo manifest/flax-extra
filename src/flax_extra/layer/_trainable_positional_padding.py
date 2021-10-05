@@ -12,8 +12,9 @@ Positions = List[int]
 class TrainablePositionalPadding(nn.Module):
     r"""Trainable positional padding.
 
-    Learns a padding vector and uses it to pad a vector at each position
-    (i.e. time step) of the sequence to desired dimension.
+    Learns a padding vector and applies it to a vector at each position
+    (i.e. time step) of the sequence to pad up vector's dimension
+    to desired value.
 
     .. math::
 
@@ -25,6 +26,12 @@ class TrainablePositionalPadding(nn.Module):
             & ) \\
             & \rightarrow \sR^{\nBatchSize \times T \times d + d^{\prime}}
         \end{aligned}
+
+    Args:
+        inputs: a sequence.
+
+    Returns:
+        a sequence with padding along feature dimension.
     """
 
     d_max: int
@@ -32,14 +39,6 @@ class TrainablePositionalPadding(nn.Module):
 
     @nn.compact
     def __call__(self, inputs: Array) -> Array:  # type: ignore[override] # pylint: disable=arguments-differ
-        r"""Adds padding to the sequence.
-
-        Args:
-            inputs: a sequence.
-
-        Returns:
-            a sequence with padding along feature dimension.
-        """
         batch_size = inputs.shape[0]
         d_input = inputs.shape[-1]
         d_padding = self.d_max - d_input

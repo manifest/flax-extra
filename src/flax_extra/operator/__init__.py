@@ -1,4 +1,4 @@
-"""Operator is just a function."""
+r"""Operator is just a function."""
 
 from flax_extra.operator._rearrange import Rearrange
 from flax_extra.operator._reshape import ReshapeBatch

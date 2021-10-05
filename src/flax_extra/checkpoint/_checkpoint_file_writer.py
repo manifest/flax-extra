@@ -1,4 +1,4 @@
-"""Writing checkpoints to the local file system."""
+r"""Writing checkpoints to the local file system."""
 
 from typing import Optional, Union
 from dataclasses import dataclass
@@ -11,22 +11,22 @@ from flax_extra.checkpoint._checkpoint_file import CheckpointFile
 
 @dataclass
 class CheckpointFileWriter:
-    """A writer for the checkpoint file format."""
+    r"""A writer for the checkpoint file format."""
 
     output_dir: str
-    """a directory path for checkpoint files."""
+    r"""a directory path for checkpoint files."""
 
     keep: int = 1
-    """a number of checkpoints to keep."""
+    r"""a number of checkpoints to keep."""
 
     overwrite: bool = True
-    """whether to override previous checkpoints."""
+    r"""whether to override previous checkpoints."""
 
     def __call__(
         self,
         checkpoint: Union[Checkpoint, Summary],
     ) -> Union[Checkpoint, Summary]:
-        """Writes a checkpoint to the file system.
+        r"""Writes a checkpoint to the file system.
 
         Args:
             checkpoint: a checkpoint to write.
@@ -36,7 +36,7 @@ class CheckpointFileWriter:
 
         Raises:
             TypeError: if the checkpoint is neither of :class:`Checkpoint`
-            nor :class:`Summary` type.
+                nor :class:`Summary` type.
         """
         return self.write(checkpoint)
 
@@ -45,7 +45,7 @@ class CheckpointFileWriter:
         checkpoint: Union[Checkpoint, Summary],
         prefix: Optional[str] = None,
     ) -> Union[Checkpoint, Summary]:
-        """Writes a checkpoint to the file system.
+        r"""Writes a checkpoint to the file system.
 
         Args:
             checkpoint: a checkpoint to write.
@@ -56,7 +56,7 @@ class CheckpointFileWriter:
 
         Raises:
             TypeError: if the checkpoint is neither of :class:`Checkpoint`
-            nor :class:`Summary` type.
+                nor :class:`Summary` type.
         """
         if not isinstance(checkpoint, (Checkpoint, Summary)):
             raise TypeError(
@@ -89,5 +89,5 @@ class CheckpointFileWriter:
 
 
 def regular_checkpoint_prefix() -> str:
-    """Returns a prefix for a regular checkpoint."""
+    r"""Returns a prefix for a regular checkpoint."""
     return "regular_"

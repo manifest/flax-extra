@@ -1,4 +1,4 @@
-"""General utility functions."""
+r"""General utility functions."""
 
 from typing import Any, Optional
 import jax
@@ -9,7 +9,7 @@ ArrayTree = Any
 
 
 def originate(tree: ArrayTree) -> ArrayTree:
-    """Originate replicated pytree object.
+    r"""Originate replicated pytree object.
 
     Assuming that each replica of the (per device) replicated pytree is
     representing a copy of the origin pytree, the function simply retrieves
@@ -25,7 +25,7 @@ def originate(tree: ArrayTree) -> ArrayTree:
 
 
 def batch_per_device(inputs: Array, n_devices: Optional[int] = None) -> Array:
-    """Splits the head axis of an array evenly across the number of devices.
+    r"""Splits the head axis of an array evenly across the number of devices.
 
     The function changes input array shape as follows:
 
@@ -44,4 +44,4 @@ def batch_per_device(inputs: Array, n_devices: Optional[int] = None) -> Array:
         n_devices = jax.local_device_count()
 
     head, *tail = inputs.shape
-    return inputs.reshape(n_devices, head // n_devices, *tail)  # type: ignore
+    return jnp.reshape(inputs, (n_devices, head // n_devices, *tail))  # type: ignore

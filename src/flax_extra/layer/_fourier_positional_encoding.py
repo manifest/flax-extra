@@ -1,4 +1,4 @@
-"""Fourier positional encoding."""
+r"""Fourier positional encoding."""
 
 from typing import Any, Callable, List, Sequence, Optional, Union
 from functools import reduce
@@ -21,21 +21,22 @@ def _build_fourier_encodings(
     n_bands: int,
     use_sine_only: bool = False,
 ) -> Array:
-    """Generates Fourier positional encoding vectors with linear spacing.
+    r"""Generates Fourier positional encoding vectors with linear spacing.
 
     The function maps spatial coordinates to the surface of a higher dimensional
     hypersphere with a set of sinusoids.
 
     Args:
-        spatial_encodings: a two-dimensional vectors representing multi-dimensional
-            spatial positions.
+        spatial_encodings: an unbatched vectors representing multi-dimensional
+            spatial positions, :math:`\in \sR^{\nSeqLen \times d}`.
         seqshape: a shape of the sequence.
         n_bands: a number of frequency bands to use.
         use_sine_only: whether to use a single phase (i.e. sine only) or two phase
             (i.e. sine and cosine) for each frequency band.
 
     Returns:
-        a two-dimensional array of positions encoded with Fourier features.
+        an unbatched vectors of Fourier features,
+            :math:`\sR^{\nSeqLen \times d}`.
     """
     seqlen, d_spatial_encoding = spatial_encodings.shape
 
@@ -81,12 +82,12 @@ def _build_spatial_positional_encodings(
     seqshape: tuple[Any, ...],
     bounds: tuple[float, float],
 ) -> Array:
-    """Generates encoding vectors for multi-dimensional spatial positions.
+    r"""Generates encoding vectors for multi-dimensional spatial positions.
 
-    The resulting vectors are two-dimensional. An encoding vector at each position
-    (or time step) may be seen as a multi-dimensional representation of the position
-    across all spatial dimensions (or similarly, as a coordinate in the
-    :math:`[\\textrm{lower_bound} \\times \\textrm{upper_bound}]^{d}` space).
+    A positional encoding vector at each position may be seen as a
+    multi-dimensional representation of the position across all spatial
+    dimensions (or similarly, as a coordinate in the
+    :math:`[\textrm{lower_bound} \times \textrm{upper_bound}]^{d}` space).
 
     Args:
         seqshape: a shape of the sequence.
@@ -94,7 +95,8 @@ def _build_spatial_positional_encodings(
         upper_bound: a maximum value for a position.
 
     Returns:
-        a two-dimensional vectors representing multi-dimensional spatial positions.
+        an unbatched vectors representing multi-dimensional spatial positions,
+            :math:`\sR^{\nSeqLen \times d}`.
     """
     lower_bound, upper_bound = bounds
     points = [
@@ -142,27 +144,68 @@ def _to_spatial_positional_encodings(
 
 
 class FourierPositionEncoding(nn.Module):
-    """Fourier (or sinusoidal) position encoding."""
+    r"""Computes a vector of Fourier (or sinusoidal) features
+    that may be seen as a multi-dimensional representation of
+    the position across all its spatial dimensions (or similarly,
+    as a single encoding of different time axes).
+
+    .. math::
+
+        \begin{aligned}
+            & \textrm{FourierPositionEncoding}( \\
+            & \quad m \in \sN \\
+            & ) \\
+            & \rightarrow \sR^{\nBatchSize \times T \times d}
+        \end{aligned}
+
+        \begin{aligned}
+            & \textrm{FourierPositionEncoding}( \\
+            & \quad m \in \sN \\
+            & \quad t \in \sN^{\nSeqLen^{\prime}} \\
+            & ) \\
+            & \rightarrow \sR^{\nBatchSize \times T \times T^{\prime} \times d}
+        \end{aligned}
+
+    Output dimension may vary depending on parameters of the module:
+
+    - For a single phase (i.e. sine only), `use_sine_only=True`.
+        - With spatial coordinates get concatenated:
+            :math:`d = n_{bands} \cdot len(seqshape) + len(seqshape)`
+        - Otherwise:
+            :math:`d = n_{bands} \cdot len(seqshape)`
+    - For two phase (i.e. sine and cosine) for each frequency band.
+        - With spatial coordinates get concatenated:
+            :math:`d = n_{bands} \cdot len(seqshape) \cdot 2 + len(seqshape)`
+        - Otherwise:
+            :math:`d = n_{bands} \cdot len(seqshape) \cdot 2`
+
+    Args:
+        batch_size: a batch size of the sequence.
+        output_positions: a subset of positions (i.e. time steps) within
+            the sequence positional encoding will be calculated.
+
+    Returns:
+        positional encoding vectors.
+    """
 
     seqshape: tuple[int, ...]
-    """a shape of the sequence."""
+    r"""a shape of the sequence."""
 
     n_bands: int
-    """a number of frequency bands to use."""
+    r"""a number of frequency bands to use."""
 
     spatial_coordinate_bounds: tuple[float, float] = (-1.0, 1.0)
-    """lower and upper bound for spatial coordinates."""
+    r"""lower and upper bound for spatial coordinates."""
 
     use_spatial_coordinates: bool = True
-    """whether to concatenate the spatial coordinates to the Fourier features."""
+    r"""whether to concatenate the spatial coordinates to the Fourier features."""
 
     use_sine_only: bool = False
-    """whether to use a single phase (i.e. sine only) or two phase (i.e. sine and cosine)
+    r"""whether to use a single phase (i.e. sine only) or two phase (i.e. sine and cosine)
     for each frequency band."""
 
     @nn.compact
-    # pylint: disable=arguments-differ
-    def __call__(  # type: ignore[override]
+    def __call__(  # type: ignore[override] # pylint: disable=arguments-differ
         self,
         batch_size: int,
         output_positions: Optional[Positions] = None,
@@ -187,10 +230,12 @@ class FourierPositionEncoding(nn.Module):
         )
         if self.use_spatial_coordinates:
             fourier_encodings = jnp.concatenate(
-                [spatial_encodings, fourier_encodings], axis=-1
+                [spatial_encodings, fourier_encodings],
+                axis=-1,
             )
 
         fourier_encodings = jnp.broadcast_to(
-            fourier_encodings[None], (batch_size, *fourier_encodings.shape)
+            fourier_encodings[None],
+            (batch_size, *fourier_encodings.shape),
         )
         return fourier_encodings

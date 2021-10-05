@@ -1,4 +1,4 @@
-"""Writing summaries to the Tensorboard."""
+r"""Writing summaries to the Tensorboard."""
 
 from dataclasses import dataclass
 import contextlib
@@ -8,7 +8,7 @@ from flax_extra.checkpoint._summary import Summary
 
 @dataclass
 class SummaryWriter:
-    """The writer persists summaries in Tensorboard file format
+    r"""The writer persists summaries in Tensorboard file format
     to the specified directory on the local file system."""
 
     output_dir: str

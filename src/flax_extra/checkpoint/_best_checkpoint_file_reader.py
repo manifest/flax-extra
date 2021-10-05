@@ -1,4 +1,4 @@
-"""Reading the best metric checkpoints from the local file system."""
+r"""Reading the best metric checkpoints from the local file system."""
 
 from dataclasses import dataclass
 from flax_extra.checkpoint._checkpoint_file import CheckpointFile
@@ -11,16 +11,16 @@ from flax_extra.checkpoint._best_checkpoint_file_writer import (
 
 @dataclass
 class LowestCheckpointFileReader(CheckpointFileReader):
-    """A reader of a lowest metric checkpoint file."""
+    r"""A reader of a lowest metric checkpoint file."""
 
     metric: str
-    """a metric label."""
+    r"""a metric label."""
 
     group: str = "eval"
-    """a group label."""
+    r"""a group label."""
 
     def __call__(self, initializer: CheckpointFile) -> CheckpointFile:
-        """Reads the latest checkpoint related to the lowest metric value
+        r"""Reads the latest checkpoint related to the lowest metric value
         from the file system.
 
         Args:
@@ -42,16 +42,16 @@ class LowestCheckpointFileReader(CheckpointFileReader):
 
 @dataclass
 class HighestCheckpointFileReader(CheckpointFileReader):
-    """A reader of a highest metric checkpoint file."""
+    r"""A reader of a highest metric checkpoint file."""
 
     metric: str
-    """a metric label."""
+    r"""a metric label."""
 
     group: str = "eval"
-    """a group label."""
+    r"""a group label."""
 
     def __call__(self, initializer: CheckpointFile) -> CheckpointFile:
-        """Reads the latest checkpoint related to the highest metric value
+        r"""Reads the latest checkpoint related to the highest metric value
         from the file system.
 
         Args:

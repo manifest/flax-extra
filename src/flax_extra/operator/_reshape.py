@@ -1,4 +1,4 @@
-"""The array reshaping operator."""
+r"""The array reshaping operator."""
 
 from dataclasses import dataclass
 from jax import numpy as jnp
@@ -9,7 +9,7 @@ Array = jnp.ndarray
 
 @dataclass
 class ReshapeBatch:
-    """Changes the shape of an array preserving its batch dimension.
+    r"""Changes the shape of an array preserving its batch dimension.
 
     >>> from jax import numpy as jnp
     >>> from flax_extra import operator as op
@@ -19,7 +19,7 @@ class ReshapeBatch:
     """
 
     shape: tuple[int, ...]
-    """an array shape excluding its batch dimension."""
+    r"""an array shape excluding its batch dimension."""
 
     @nn.compact
     def __call__(self, inputs: Array) -> Array:

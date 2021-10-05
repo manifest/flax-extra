@@ -1,4 +1,4 @@
-"""Flax extras."""
+r"""Flax extras."""
 
 from flax_extra import (
     util,

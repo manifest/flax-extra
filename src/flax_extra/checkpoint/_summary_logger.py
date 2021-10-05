@@ -1,4 +1,4 @@
-"""Logging a summary to stdout."""
+r"""Logging a summary to stdout."""
 
 from typing import Optional
 from functools import reduce
@@ -7,7 +7,7 @@ from flax_extra.checkpoint._summary import Summary, Metrics
 
 # pylint: disable=too-few-public-methods
 class SummaryLogger:
-    """The writer prints summaries to stdout."""
+    r"""The writer prints summaries to stdout."""
 
     def __init__(self) -> None:
         self._formatting_info: Optional[tuple[int, int]] = None

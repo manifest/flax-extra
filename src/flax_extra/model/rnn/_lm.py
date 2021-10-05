@@ -1,6 +1,6 @@
-"""RNN models."""
+r"""RNN language model."""
 
-from typing import Type
+from typing import Callable
 from flax import linen as nn
 from flax.linen.recurrent import Array
 from redex import combinator as cb
@@ -8,30 +8,32 @@ from flax_extra import layer as xn
 from flax_extra import operator as xp
 
 
+RNNT = Callable[..., nn.Module]
+
+
 class RNNLM(nn.Module):
-    """RNN language model."""
+    r"""RNN language model."""
 
     vocab_size: int
-    """size of the vocabulary."""
+    r"""size of the vocabulary."""
 
     d_model: int = 512
-    """depth of the model."""
+    r"""depth of the model."""
 
     n_layers: int = 2
-    """a number of RNN layers."""
+    r"""a number of RNN layers."""
 
     dropout_rate: float = 0.1
-    """probababilistic rate for dropout."""
+    r"""probababilistic rate for dropout."""
 
-    rnn_type: Type[nn.Module] = xn.LSTM
-    """a type of the RNN."""
+    rnn_type: RNNT = xn.LSTM
+    r"""a type of the RNN."""
 
     deterministic: bool = True
-    """whether to perform deterministically or not."""
+    r"""whether to perform deterministically or not."""
 
     @nn.compact
-    # pylint: disable=arguments-differ
-    def __call__(self, inputs: Array) -> Array:  # type: ignore[override]
+    def __call__(self, inputs: Array) -> Array:  # type: ignore[override] # pylint: disable=arguments-differ
         return cb.serial(
             xp.ShiftRight(axis=1),
             nn.Embed(

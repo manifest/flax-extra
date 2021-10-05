@@ -1,6 +1,6 @@
-"""Reading checkpoints from the local file system."""
+r"""Reading checkpoints from the local file system."""
 
-from typing import Any, Callable, Mapping, Optional, Union
+from typing import cast, Any, Callable, Mapping, Optional, Union
 from dataclasses import dataclass
 from flax.training import checkpoints
 from flax_extra.checkpoint._checkpoint_file import CheckpointFile
@@ -9,19 +9,19 @@ from flax_extra.checkpoint._checkpoint_file_writer import regular_checkpoint_pre
 
 @dataclass
 class CheckpointFileReader:
-    """A reader for the checkpoint file format."""
+    r"""A reader for the checkpoint file format."""
 
     dir: str
-    """a directory path for checkpoint files."""
+    r"""a directory path for checkpoint files."""
 
     ## The `target` is required to restore type information.
     ## It is used to initialize `CheckpointFile` at step 0.
     target: Callable[..., Any]
-    """init function of the model related to the checkpoint.
+    r"""init function of the model related to the checkpoint.
     It is used to restore type information."""
 
     def __call__(self, initializer: CheckpointFile) -> CheckpointFile:
-        """Reads the latest checkpoint from the file system.
+        r"""Reads the latest checkpoint from the file system.
 
         If the checkpoint file doesn't exist, given initial checkpoint
         will be returned.
@@ -36,14 +36,14 @@ class CheckpointFileReader:
         Raises:
             TypeError: if the initializer is not of the :class:`Checkpoint` type.
         """
-        return self.read(initializer)  # type: ignore
+        return cast(CheckpointFile, self.read(initializer))
 
     def read(
         self,
         initializer: Optional[CheckpointFile],
         prefix: Optional[str] = None,
     ) -> Union[CheckpointFile, Mapping[str, Any]]:
-        """Reads the latest checkpoint from the file system.
+        r"""Reads the latest checkpoint from the file system.
 
         If the checkpoint file doesn't exist, given initial checkpoint
         will be returned.

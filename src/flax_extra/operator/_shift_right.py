@@ -1,4 +1,4 @@
-"""The shift-right operator."""
+r"""The shift-right operator."""
 
 from typing import List
 from dataclasses import dataclass
@@ -9,7 +9,7 @@ Array = jnp.ndarray
 
 @dataclass
 class ShiftRight:
-    """Inserts padding to shift the sequence.
+    r"""Inserts padding to shift the sequence.
 
     >>> from jax import numpy as jnp
     >>> from flax_extra import operator as op
@@ -19,13 +19,13 @@ class ShiftRight:
     """
 
     n_positions: int = 1
-    """a number of positions to shift."""
+    r"""a number of positions to shift."""
 
     pad_id: int = 0
-    """a padding identifier to insert."""
+    r"""a padding identifier to insert."""
 
     axis: int = 0
-    """the operation will be performed along this axis."""
+    r"""the operation will be performed along this axis."""
 
     def __call__(self, inputs: Array) -> Array:
         def pad_width() -> List[tuple[int, int]]:
