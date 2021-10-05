@@ -1,4 +1,4 @@
-"""Batch types and data processing functions.
+r"""Batch types and data processing functions.
 
 The batch, inputs, and targets in **Training API** usually
 represented using unnormalized form for user convenience.
@@ -32,7 +32,7 @@ DataStream = Generator[UnnormalizedBatch, None, None]
 
 
 def normalize_batch(batch: UnnormalizedBatch) -> Batch:
-    """Converts a batch to its normalized form.
+    r"""Converts a batch to its normalized form.
 
     Args:
         batch: a batch to normalize.
@@ -44,7 +44,7 @@ def normalize_batch(batch: UnnormalizedBatch) -> Batch:
 
 
 def normalize_batch_per_device(batch: UnnormalizedBatch, n_devices: int) -> Batch:
-    """Converts a batch to the normalized form splitting head axis of
+    r"""Converts a batch to the normalized form splitting head axis of
     inputs and targets evenly across the number of devices.
 
     Args:

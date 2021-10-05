@@ -1,9 +1,9 @@
-"""Logging to cosole."""
+r"""Logging to cosole."""
 import sys
 
 
 def log(message: str, stdout: bool) -> None:
-    """Writes a message to stdout.
+    r"""Writes a message to stdout.
 
     Args:
         message: an arbitrary text.
@@ -15,7 +15,7 @@ def log(message: str, stdout: bool) -> None:
 
 
 def log_step(step: int, message: str, stdout: bool = True) -> None:
-    """Writes a step-related message to stdout.
+    r"""Writes a step-related message to stdout.
 
     Args:
         step: the step number.

@@ -1,4 +1,4 @@
-"""The array rearranging operator."""
+r"""The array rearranging operator."""
 
 from dataclasses import dataclass, field
 from typing import Mapping
@@ -11,7 +11,7 @@ Array = jnp.ndarray
 
 @dataclass
 class Rearrange:
-    """Rearranges the shape of an array according to the pattern.
+    r"""Rearranges the shape of an array according to the pattern.
 
     >>> from jax import numpy as jnp
     >>> from flax_extra import operator as op
@@ -21,10 +21,10 @@ class Rearrange:
     """
 
     pattern: str
-    """a rearrangement pattern."""
+    r"""a rearrangement pattern."""
 
     bindings: Mapping[str, int] = field(default_factory=dict)
-    """bindings for dimensions specified in the pattern."""
+    r"""bindings for dimensions specified in the pattern."""
 
     @nn.compact
     def __call__(self, inputs: Array) -> Array:

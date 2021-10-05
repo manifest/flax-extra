@@ -9,9 +9,7 @@ Array = jnp.ndarray
 
 
 class TrainablePositionalMasking(nn.Module):
-    r"""Trainable positional masking.
-
-    Learns a mask vector and uses it to mask a vector at each position
+    r"""Learns a mask vector and applies it to a vector at each position
     (i.e. time step) of the sequence according specified probabilistic rate.
 
     .. math::
@@ -24,6 +22,12 @@ class TrainablePositionalMasking(nn.Module):
             & ) \\
             & \rightarrow \sR^{\nBatchSize \times T \times d}
         \end{aligned}
+
+    Args:
+        inputs: a sequence.
+
+    Returns:
+        a masked sequence.
     """
 
     rate: float
@@ -31,14 +35,6 @@ class TrainablePositionalMasking(nn.Module):
 
     @nn.compact
     def __call__(self, inputs: Array) -> Array:  # type: ignore[override] # pylint: disable=arguments-differ
-        r"""Applies a mask to the sequence.
-
-        Args:
-            inputs: a sequence.
-
-        Returns:
-            a masked sequence.
-        """
         batch_size, seqlen_input, d_input = inputs.shape
         masking = TrainablePositionalEncoding(
             seqlen=1,

@@ -1,4 +1,4 @@
-"""LSTM layer."""
+r"""LSTM layer."""
 
 from redex import combinator as cb
 from flax import linen as nn
@@ -8,7 +8,7 @@ LSTMState = tuple[Array, Array]
 
 # TODO: add type annotation to `nn.LSTMCell`.
 class LSTMCell(nn.LSTMCell):
-    """LSTM cell."""
+    r"""LSTM cell."""
 
     def __call__(  # type: ignore[override]
         self,
@@ -20,18 +20,17 @@ class LSTMCell(nn.LSTMCell):
 
 
 class LSTM(nn.Module):
-    """LSTM running on axis 1.
+    r"""LSTM running on time axis.
 
     The layer scans over each time step of the input and returns its hidden
     output state for the last time step (hidden cell state is dropped).
     """
 
     d_hidden: int
-    """depth of a hidden state. LSTM has (output state and cell state)."""
+    r"""depth of a hidden state. LSTM has (output state and cell state)."""
 
     @nn.compact
-    # pylint: disable=arguments-differ
-    def __call__(self, inputs: Array) -> Array:  # type: ignore[override]
+    def __call__(self, inputs: Array) -> Array:  # type: ignore[override] # pylint: disable=arguments-differ
         return cb.serial(
             cb.branch(self.initial_state, cb.identity(n_in=1)),
             nn.scan(
@@ -45,7 +44,7 @@ class LSTM(nn.Module):
         )(inputs)
 
     def initial_state(self, inputs: Array) -> LSTMState:
-        """Creates an LSTM state."""
+        r"""Creates an LSTM state."""
         batch_size = inputs.shape[0]
         return nn.LSTMCell.initialize_carry(  # type:ignore
             self.make_rng("carry"),

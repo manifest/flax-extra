@@ -1,4 +1,4 @@
-"""The checkpoint file format."""
+r"""The checkpoint file format."""
 
 import typing
 from typing import Any
@@ -14,25 +14,25 @@ FrozenVars = FrozenDict[Any, Any]
 
 # pylint: disable=too-few-public-methods
 class CheckpointFile(PyTreeNode):
-    """The file format to store checkpoint on the local file system."""
+    r"""The file format to store checkpoint on the local file system."""
 
     model_params: FrozenVars
-    """parameters of the model at the checkpoint."""
+    r"""parameters of the model at the checkpoint."""
 
     model_state: FrozenVars
-    """a state of the model at the checkpoint."""
+    r"""a state of the model at the checkpoint."""
 
     optimizer_state: optax.OptState
-    """a state of the optimizer at the checkpoint."""
+    r"""a state of the optimizer at the checkpoint."""
 
     step: int
-    """a step number this checkpoint was occured."""
+    r"""a step number this checkpoint was occured."""
 
     metrics: Metrics = field(default_factory=dict)
-    """metrics at the current checkpoint."""
+    r"""metrics at the current checkpoint."""
 
     version: int = 0
-    """the file format version."""
+    r"""the file format version."""
 
     if typing.TYPE_CHECKING:
 

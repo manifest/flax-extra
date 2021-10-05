@@ -1,4 +1,4 @@
-"""Writing the best metric checkpoints to the local file system."""
+r"""Writing the best metric checkpoints to the local file system."""
 
 import abc
 from typing import Any, Optional
@@ -9,20 +9,20 @@ from flax_extra.checkpoint._checkpoint_file_writer import CheckpointFileWriter
 
 
 class BestCheckpointFileWriter(CheckpointFileWriter, metaclass=abc.ABCMeta):
-    """A base class for the best metric checkpoint writers."""
+    r"""A base class for the best metric checkpoint writers."""
 
     @property
     def best_metric(self) -> float:
-        """the current value for the best metric."""
+        r"""the current value for the best metric."""
         return self._best_metric
 
     @abc.abstractmethod
     def default_metric_value(self) -> float:
-        """an initial value for the best metric."""
+        r"""an initial value for the best metric."""
 
     @abc.abstractmethod
     def is_best(self, metric: float) -> bool:
-        """Determines whether the metric value is the best.
+        r"""Determines whether the metric value is the best.
 
         Args:
             metric: a new value to compare the current best value with.
@@ -38,7 +38,7 @@ class BestCheckpointFileWriter(CheckpointFileWriter, metaclass=abc.ABCMeta):
         prefix: str,
         **kwds: Any,
     ) -> None:
-        """Initializes the writer.
+        r"""Initializes the writer.
 
         Args:
             metric: a metric label.
@@ -61,7 +61,7 @@ class BestCheckpointFileWriter(CheckpointFileWriter, metaclass=abc.ABCMeta):
         )
 
     def __call__(self, summary: Summary) -> Summary:  # type: ignore
-        """Keeps track of the best metric value and writes a checkpoint
+        r"""Keeps track of the best metric value and writes a checkpoint
         to the local file system when the value get updated.
 
         Args:
@@ -90,7 +90,7 @@ class BestCheckpointFileWriter(CheckpointFileWriter, metaclass=abc.ABCMeta):
 
 
 class LowestCheckpointFileWriter(BestCheckpointFileWriter):
-    """A checkpoint writer that writes a checkpoint each time the lowest metric
+    r"""A checkpoint writer that writes a checkpoint each time the lowest metric
     value is observed."""
 
     def __init__(
@@ -100,7 +100,7 @@ class LowestCheckpointFileWriter(BestCheckpointFileWriter):
         stdout: bool = True,
         **kwds: Any,
     ) -> None:
-        """Initializes the lowest metric checkpoint writer.
+        r"""Initializes the lowest metric checkpoint writer.
 
         Args:
             metric: a metric label.
@@ -124,7 +124,7 @@ class LowestCheckpointFileWriter(BestCheckpointFileWriter):
 
 
 class HighestCheckpointFileWriter(BestCheckpointFileWriter):
-    """A checkpoint writer that writes a checkpoint each time the highest metric
+    r"""A checkpoint writer that writes a checkpoint each time the highest metric
     value is observed."""
 
     def __init__(
@@ -134,7 +134,7 @@ class HighestCheckpointFileWriter(BestCheckpointFileWriter):
         stdout: bool = True,
         **kwds: Any,
     ):
-        """Initializes the highest metric checkpoint writer.
+        r"""Initializes the highest metric checkpoint writer.
 
         Args:
             metric: a metric label.
@@ -158,12 +158,12 @@ class HighestCheckpointFileWriter(BestCheckpointFileWriter):
 
 
 def lowest_checkpoint_prefix(group_label: str, metric_label: str) -> str:
-    """Returns a prefix for a lowest metric checkpoint."""
+    r"""Returns a prefix for a lowest metric checkpoint."""
     return f"lowest_{group_label}_{metric_label}_"
 
 
 def highest_checkpoint_prefix(group_label: str, metric_label: str) -> str:
-    """Returns a prefix for a highest metric checkpoint."""
+    r"""Returns a prefix for a highest metric checkpoint."""
     return f"highest_{group_label}_{metric_label}_"
 
 

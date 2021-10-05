@@ -1,6 +1,6 @@
 r"""Encoding."""
 
-from typing import cast, Any, Callable, List, Optional
+from typing import cast, Callable, List, Optional
 from jax import numpy as jnp
 from flax import linen as nn
 
@@ -11,13 +11,16 @@ Positions = List[int]
 
 PreprocessingFn = Callable[[Array], Array]
 PreprocessingCt = Callable[[], PreprocessingFn]
-PositionalEncodingFn = Callable[[int, List[int]], Array]
+PositionalEncodingFn = Callable[[int, Optional[Positions]], Array]
 PositionalEncodingCt = Callable[[], PositionalEncodingFn]
+EncodingFn = Callable[[Array, Optional[Positions]], Array]
+EncodingCt = Callable[[], EncodingFn]
 BinaryOperator = Callable[[Array, Array], Array]
 
 
 class Encoding(nn.Module):
-    r"""Encodes a sequence using an optional preprocessing
+    r"""Encodes a vector at each position (i.e. time step)
+    of the sequence using an optional preprocessing step
     and a positional encoding.
 
     Preprocessed inputs get reshaped to
@@ -31,8 +34,8 @@ class Encoding(nn.Module):
             & \textrm{Encoding}( \\
             & \quad x \in \sR^{\nBatchSize \times T \times d} \\
             & \quad \_ \\
-            & \quad w \gets Preprocessing() \\
-            & \quad w \gets PositionalEncoding() \\
+            & \quad \theta \gets Preprocessing() \\
+            & \quad \theta \gets PositionalEncoding() \\
             & ) \\
             & \rightarrow \sR^{\nBatchSize \times T \times d^{\prime}}
         \end{aligned}
@@ -42,11 +45,19 @@ class Encoding(nn.Module):
             & \quad x \in \sR^{\nBatchSize \times T \times d} \\
             & \quad t \in \sN^{\nSeqLen^{\prime}} \\
             & \quad \_ \\
-            & \quad w \gets Preprocessing() \\
-            & \quad w \gets PositionalEncoding() \\
+            & \quad \theta \gets Preprocessing() \\
+            & \quad \theta \gets PositionalEncoding() \\
             & ) \\
             & \rightarrow \sR^{\nBatchSize \times T^{\prime} \times d^{\prime}}
         \end{aligned}
+
+    Args:
+        inputs: an input sequence.
+        output_positions: a subset of positions (i.e. time steps) within
+            the sequence encoding will be calculated.
+
+    Returns:
+        encoded vectors.
     """
 
     preprocessing: PreprocessingCt = cast(PreprocessingCt, lambda: cb.identity(n_in=1))
@@ -67,17 +78,6 @@ class Encoding(nn.Module):
         inputs: Array,
         output_positions: Optional[Positions],
     ) -> Array:
-        r"""Computes an encoding vector for each position (i.e. time step)
-        of the sequence.
-
-        Args:
-            inputs: an input sequence.
-            output_positions: a subset of positions (i.e. time steps) within
-                the sequence encoding will be calculated.
-
-        Returns:
-            encoding vectors.
-        """
         batch_size = inputs.shape[0]
 
         # Preprocess.
@@ -96,8 +96,8 @@ class Encoding(nn.Module):
         ## Enhance with positional information.
         return self.aggregation(  # type: ignore
             preprocessed_inputs_1d,
-            self.positional_encoding()(  # type:ignore # pylint: disable=not-callable
-                batch_size=batch_size,
-                output_positions=output_positions,
+            self.positional_encoding()(  # pylint: disable=not-callable
+                batch_size,
+                output_positions,
             ),
         )

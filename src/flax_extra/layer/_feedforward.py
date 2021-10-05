@@ -1,4 +1,4 @@
-"""FeedForward layer."""
+r"""FeedForward layer."""
 
 from typing import Any, Callable, Sequence, Optional, Union
 import jax
@@ -15,23 +15,43 @@ InitFn = Callable[[KeyArray, Shape, Dtype], Array]
 
 
 class FeedForward(nn.Module):
-    """A dense layer encouraging sparsity."""
+    r"""Learns a dense vector representation.
+
+    .. math::
+
+        \begin{aligned}
+            & \textrm{FeedForward}( \\
+            & \quad x \in \sR^{\nBatchSize \times \dots d} \\
+            & \quad \_ \\
+            & \quad w_{h} \in \sR^{d_{x} \times d \cdot \text{factor}} \\
+            & \quad w_{o} \in \sR^{d \cdot \text{factor} \times d} \\
+            & \quad b_{h} \in \sR^{d \cdot \text{factor}} \\
+            & \quad b_{o} \in \sR^{d} \\
+            & ) \\
+            & \rightarrow \sR^{\nBatchSize \times \dots d}
+        \end{aligned}
+
+    Args:
+        inputs: a tensor.
+
+    Returns:
+        a tensor of the same shape as the input tensor.
+    """
 
     widening_factor: int = 4
-    """determines a hidden dimension of the layer as a product of
+    r"""determines a hidden dimension of the layer as a product of
     the inputs dimension by the factor value."""
 
     activation: Callable[..., Array] = jax.nn.gelu
-    """a nonlinear function."""
+    r"""a nonlinear function."""
 
     kernel_init: InitFn = nn.initializers.lecun_normal()
-    """weights initializer."""
+    r"""an initializer for weights."""
 
     @nn.compact
-    # pylint: disable=arguments-differ
-    def __call__(self, inputs: Array) -> Array:  # type: ignore[override]
+    def __call__(self, inputs: Array) -> Array:  # type: ignore[override] # pylint: disable=arguments-differ
         d_output = inputs.shape[-1]
-        return cb.serial(
+        block = cb.serial(
             nn.Dense(
                 features=self.widening_factor * d_output,
                 kernel_init=self.kernel_init,  # type: ignore
@@ -41,6 +61,10 @@ class FeedForward(nn.Module):
                 features=d_output,
                 kernel_init=self.kernel_init,  # type: ignore
             ),
-        )(
-            inputs,  # type: ignore
         )
+
+        return block(inputs)  # type: ignore
+
+
+FeedForwardFn = Callable[[Array], Array]
+FeedForwardCt = Callable[..., FeedForwardFn]

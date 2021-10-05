@@ -1,4 +1,4 @@
-"""Evaluating models."""
+r"""Evaluating models."""
 
 from typing import Any, Callable, List, Mapping, MutableMapping, Optional
 from functools import partial
@@ -22,16 +22,16 @@ EvaluationFn = Callable[[FrozenVars, FrozenVars, Batch, KeyArray], Metrics]
 
 @dataclass
 class EvalTask:
-    """The evaluation task describes how to evaluate a model."""
+    r"""The evaluation task describes how to evaluate a model."""
 
     apply: Callable[..., Any]
-    """an apply function of the model (a linen module)."""
+    r"""an apply function of the model (a linen module)."""
 
     metrics: MetricSpecs
-    """evaluation metrics with corresponding labels."""
+    r"""evaluation metrics with corresponding labels."""
 
     data: DataStream
-    """a data stream of evaluation examples.
+    r"""a data stream of evaluation examples.
 
     An item, yielded by the data stream, must consist of inputs and targets.
     Each of them may be represented as a single array or multiple arrays.
@@ -53,27 +53,27 @@ class EvalTask:
 
 @dataclass
 class EvalTaskRunner:
-    """The evaluation task runner holds everything required to evaluate
+    r"""The evaluation task runner holds everything required to evaluate
     the model (e.g. data generator, etc.)."""
 
     evaluation: EvaluationFn
-    """a function performing evaluation of the model."""
+    r"""a function performing evaluation of the model."""
 
     data_generator: DataStream
-    """a data stream of evaluation examples."""
+    r"""a data stream of evaluation examples."""
 
     randnumkey_generator: random.KeyGenerator
-    """a random number key generator."""
+    r"""a random number key generator."""
 
     n_devices: int
-    """a number of devices to parallelize evaluation."""
+    r"""a number of devices to parallelize evaluation."""
 
     def run(
         self,
         model_params: FrozenVars,
         model_state: FrozenVars,
     ) -> Metrics:
-        """Runs a single evaluation step.
+        r"""Runs a single evaluation step.
 
         Args:
             model_params: parameters of the model.
@@ -101,7 +101,7 @@ class EvalTaskRunner:
 
 
 class EvalLoop:
-    """The evaluation loop performs a few steps evaluating a model
+    r"""The evaluation loop performs a few steps evaluating a model
     then returns averaged metrics."""
 
     # pylint: disable=too-many-arguments
@@ -113,7 +113,7 @@ class EvalLoop:
         collections: Optional[Mapping[str, List[str]]] = None,
         n_devices: Optional[int] = None,
     ):
-        """Initializes the evaluation loop.
+        r"""Initializes the evaluation loop.
 
         Args:
             task: a discription of an evaluation task.
@@ -151,7 +151,7 @@ class EvalLoop:
 
     @property
     def n_steps(self) -> int:
-        """a number of steps in the loop."""
+        r"""a number of steps in the loop."""
         return self._n_steps
 
     def __call__(self, checkpoint: Checkpoint) -> Summary:
@@ -190,7 +190,7 @@ class EvalLoop:
 
 
 def _tree_l2norm(tree: ArrayTree) -> float:
-    """Computes L2-norm for each leaf of the pytree object, then average the result.
+    r"""Computes L2-norm for each leaf of the pytree object, then average the result.
 
     Args:
         tree: a pytree.

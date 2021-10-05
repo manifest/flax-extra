@@ -1,4 +1,4 @@
-"""The checkpoint representation and file operations."""
+r"""The checkpoint representation and file operations."""
 
 from flax_extra.checkpoint._checkpoint import Checkpoint
 from flax_extra.checkpoint._checkpoint_file import CheckpointFile
