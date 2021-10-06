@@ -25,12 +25,12 @@ class Decoder(nn.Module):
         \begin{aligned}
             & \textrm{Decoder}( \\
             & \quad z \in \sR^{\nBatchSize \times \nSeqLen_{z} \times d_{z}} \\
-            & \quad y \in \sR^{\nBatchSize \times \nSeqLen_{y} \times d_{y}} \\
-            & \quad mask \in \sR^{\nBatchSize \times \nSeqLen_{z} \times \nSeqLen_{y}} \\
+            & \quad o \in \sR^{\nBatchSize \times \nSeqLen_{o} \times d_{o}} \\
+            & \quad mask \in \sR^{\nBatchSize \times \nSeqLen_{z} \times \nSeqLen_{o}} \\
             & \quad \_ \\
             & \quad \theta \gets CrossAttentionBlock() \\
             & ) \\
-            & \rightarrow \sR^{\nBatchSize \times \nSeqLen_{y} \times d_{y}}
+            & \rightarrow \sR^{\nBatchSize \times \nSeqLen_{o} \times d_{o}}
         \end{aligned}
 
     Args:

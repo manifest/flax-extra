@@ -10,9 +10,6 @@ from flax_extra import combinator as cb
 
 Array = jnp.ndarray
 
-MultimodalDecodingFn = Callable[[Array, List[int]], List[Array]]
-MultimodalDecodingCt = Callable[..., MultimodalDecodingFn]
-
 
 def _split_modalities(inputs: Array, seqlens: List[int]) -> List[Array]:
     r"""Partitions a multimodal tensor into tensors for each modality."""
@@ -42,7 +39,7 @@ class MultimodalDecoding(nn.Module):
 
         \begin{aligned}
             & \textrm{MultimodalDecoding}( \\
-            & \quad y \in \sR^{\nBatchSize \times \nSeqLen \times d} \\
+            & \quad o \in \sR^{\nBatchSize \times \nSeqLen \times d} \\
             & \quad l_{x} \in n_{mod} \times \sN \\
             & \quad \_ \\
             & \quad \theta \gets MultimodalEmbeddingDecoding() \\
@@ -71,24 +68,28 @@ class MultimodalDecoding(nn.Module):
     (e.g. :class:`flax_extra.layer.EmbedDecoding` or
     :class:`flax.linen.Dense`)."""
 
+    @property
+    def n_modalities(self) -> int:
+        r""" "a number of modalities."""
+        return len(self.modalities)
+
     @nn.compact
     def __call__(  # type: ignore[override] # pylint: disable=arguments-differ
         self,
         outputs: Array,
         seqlen_outputs: List[int],
     ) -> Union[Array, List[Array]]:
-        if self.d_hidden is not None:
-            outputs = nn.Dense(features=self.d_hidden)(outputs)
-
-        n_modalities = len(self.modalities)
-        if _verify_modalities(seqlen_outputs, n_modalities) is None:
+        if _verify_modalities(seqlen_outputs, self.n_modalities) is None:
             raise ValueError(
-                f"The number of {self.__name__} modalities {n_modalities} "
+                f"The number of {self.__name__} modalities {self.n_modalities} "
                 f"doesn't match the number of output sequences."
             )
 
+        # Decode multimodal embedding.
+        outputs = self.multimodal_embedding_decoding()(outputs)
+
         # Single modality.
-        if n_modalities == 1:
+        if self.n_modalities == 1:
             decoding = self.modalities[0]
             return decoding()(outputs)
 
@@ -102,5 +103,10 @@ class MultimodalDecoding(nn.Module):
 
         decode_initializer: _DecodeInitializer = []
         return reduce(
-            decode, zip(multimodal_outputs, self.modalities), decode_initializer
+            decode,
+            zip(multimodal_outputs, self.modalities),
+            decode_initializer,
         )
+
+
+MultimodalDecodingCt = Callable[..., MultimodalDecoding]

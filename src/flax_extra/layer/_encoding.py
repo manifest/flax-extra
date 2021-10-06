@@ -13,8 +13,6 @@ PreprocessingFn = Callable[[Array], Array]
 PreprocessingCt = Callable[..., PreprocessingFn]
 PositionalEncodingFn = Callable[[int, Optional[Positions]], Array]
 PositionalEncodingCt = Callable[..., PositionalEncodingFn]
-EncodingFn = Callable[[Array, Optional[Positions]], Array]
-EncodingCt = Callable[..., EncodingFn]
 BinaryOperator = Callable[[Array, Array], Array]
 
 
@@ -73,6 +71,7 @@ class Encoding(nn.Module):
     r"""a binary operation (e.g. :class:`flax_extra.combinator.concatenate`
     or :class:`flax_extra.combinator.add`)."""
 
+    @nn.compact
     def __call__(  # type: ignore[override] # pylint: disable=arguments-differ
         self,
         inputs: Array,
@@ -101,3 +100,6 @@ class Encoding(nn.Module):
                 output_positions,
             ),
         )
+
+
+EncodingCt = Callable[..., Encoding]
