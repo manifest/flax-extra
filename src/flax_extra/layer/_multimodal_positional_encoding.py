@@ -1,6 +1,6 @@
 r"""Multimodal positional encoding."""
 
-from typing import Any, List, Optional
+from typing import Any, Callable, List, Optional
 from functools import reduce
 import jax.numpy as jnp
 from flax import linen as nn
@@ -46,8 +46,8 @@ class MultimodalPositionalEncoding(nn.Module):
             & \textrm{MultimodalPositionalEncoding}( \\
             & \quad m \in \sN \\
             & \quad \_ \\
-            & \quad w \gets PositionalEncoding() \\
-            & \quad w \gets TrainablePositionalPadding() \\
+            & \quad \theta \gets PositionalEncoding() \\
+            & \quad \theta \gets TrainablePositionalPadding() \\
             & ) \\
             & \rightarrow \\
             & \quad h \in \sR^{\nBatchSize \times T^{\prime} \times d^{\prime}} \\
@@ -59,8 +59,8 @@ class MultimodalPositionalEncoding(nn.Module):
             & \quad m \in \sN \\
             & \quad t \in n_{mod} \times \sN^{\nSeqLen^{\prime}} \\
             & \quad \_ \\
-            & \quad w \gets PositionalEncoding() \\
-            & \quad w \gets TrainablePositionalPadding() \\
+            & \quad \theta \gets PositionalEncoding() \\
+            & \quad \theta \gets TrainablePositionalPadding() \\
             & ) \\
             & \rightarrow \\
             & \quad h \in \sR^{\nBatchSize \times T^{\prime} \times d^{\prime}} \\
@@ -86,26 +86,29 @@ class MultimodalPositionalEncoding(nn.Module):
     d_reserved: int = 1
     r"""a number of reserved feature dimensions."""
 
+    @property
+    def n_modalities(self) -> int:
+        r"""a number of modalities."""
+        return len(self.modalities)
+
     @nn.compact
     def __call__(  # type: ignore[override] # pylint: disable=arguments-differ
         self,
         batch_size: int,
         multimodal_output_positions: Optional[List[Optional[Positions]]],
     ) -> tuple[Array, List[int]]:
-        n_modalities = len(self.modalities)
-
         multimodal_output_positions = _normalize_modalities(
             multimodal_output_positions,
-            n_modalities,
+            self.n_modalities,
         )
         if multimodal_output_positions is None:
             raise ValueError(
-                f"The number of {self.__name__} modalities {n_modalities} "
+                f"The number of {self.__name__} modalities {self.n_modalities} "
                 f"doesn't match the number of provided subsamples."
             )
 
         # Single modality.
-        if n_modalities == 1:
+        if self.n_modalities == 1:
             positional_encoding = self.modalities[0]
             encoded_inputs = positional_encoding()(
                 batch_size,
@@ -152,3 +155,6 @@ class MultimodalPositionalEncoding(nn.Module):
         )
 
         return jnp.concatenate(multimodal_padded_inputs, axis=1), seqlen_inputs
+
+
+MultimodalPositionalEncodingCt = Callable[..., MultimodalPositionalEncoding]

@@ -15,17 +15,6 @@ from flax_extra.layer._encoding import EncodingCt
 Array = jnp.ndarray
 Positions = List[int]
 
-MultimodalEncodingFn = Callable[
-    [List[Array], Optional[List[Optional[Positions]]]],
-    tuple[Array, List[int]],
-]
-MultimodalEncodingCt = Callable[..., MultimodalEncodingFn]
-MultimodalPositionalEncodingFn = Callable[
-    [int, Optional[List[Optional[Positions]]]],
-    tuple[Array, List[int]],
-]
-MultimodalPositionalEncodingCt = Callable[..., MultimodalPositionalEncodingFn]
-
 _EncodeInitializer = tuple[int, List[int], List[Array]]
 _EncodeData = tuple[Array, Optional[Positions], EncodingCt]
 
@@ -42,9 +31,9 @@ class MultimodalEncoding(nn.Module):
             & \textrm{MultimodalEncoding}( \\
             & \quad x \in n_{mod} \times \sR^{m \times T \times d} \\
             & \quad \_ \\
-            & \quad w \gets PositionalEncoding() \\
-            & \quad w \gets TrainablePositionalPadding() \\
-            & \quad w \gets TrainablePositionalMasking() \\
+            & \quad \theta \gets PositionalEncoding() \\
+            & \quad \theta \gets TrainablePositionalPadding() \\
+            & \quad \theta \gets TrainablePositionalMasking() \\
             & ) \\
             & \rightarrow \\
             & \quad h \in \sR^{\nBatchSize \times T^{\prime} \times d^{\prime}} \\
@@ -56,9 +45,9 @@ class MultimodalEncoding(nn.Module):
             & \quad x \in n_{mod} \times \sR^{m \times T \times d} \\
             & \quad t \in n_{mod} \times \sN^{\nSeqLen^{\prime}} \\
             & \quad \_ \\
-            & \quad w \gets PositionalEncoding() \\
-            & \quad w \gets TrainablePositionalPadding() \\
-            & \quad w \gets TrainablePositionalMasking() \\
+            & \quad \theta \gets PositionalEncoding() \\
+            & \quad \theta \gets TrainablePositionalPadding() \\
+            & \quad \theta \gets TrainablePositionalMasking() \\
             & ) \\
             & \rightarrow \\
             & \quad h \in \sR^{\nBatchSize \times T^{\prime} \times d^{\prime}} \\
@@ -85,34 +74,37 @@ class MultimodalEncoding(nn.Module):
     d_reserved: int = 1
     r"""a number of reserved feature dimensions."""
 
+    @property
+    def n_modalities(self) -> int:
+        r"""a number of modalities."""
+        return len(self.modalities)
+
     @nn.compact
     def __call__(  # type: ignore[override] # pylint: disable=arguments-differ, disable=too-many-locals
         self,
         multimodal_inputs: List[Array],
         multimodal_output_positions: Optional[List[Optional[Positions]]],
     ) -> tuple[Array, List[int]]:
-        n_modalities = len(self.modalities)
-
-        verified_multimodal_inputs = _verify_modalities(multimodal_inputs, n_modalities)
-        if verified_multimodal_inputs is None:
+        if _verify_modalities(multimodal_inputs, self.n_modalities) is None:
             raise ValueError(
-                f"The number of {self.__name__} modalities {n_modalities} "
+                f"The number of {self.__name__} modalities {self.n_modalities} "
                 f"doesn't match the number of its arguments."
             )
 
         multimodal_output_positions = _normalize_modalities(
-            multimodal_output_positions, n_modalities
+            multimodal_output_positions,
+            self.n_modalities,
         )
         if multimodal_output_positions is None:
             raise ValueError(
-                f"The number of {self.__name__} modalities {n_modalities} "
+                f"The number of {self.__name__} modalities {self.n_modalities} "
                 f"doesn't match the number of provided output positions."
             )
 
-        mask_rates = _normalize_modalities(self.mask_rates, n_modalities)
+        mask_rates = _normalize_modalities(self.mask_rates, self.n_modalities)
         if mask_rates is None:
             raise ValueError(
-                f"The number of {self.__name__} modalities {n_modalities} "
+                f"The number of {self.__name__} modalities {self.n_modalities} "
                 f"doesn't match the number of provided mask rates."
             )
 
@@ -166,3 +158,6 @@ class MultimodalEncoding(nn.Module):
         )
 
         return jnp.concatenate(multimodal_padded_inputs, axis=1), seqlen_inputs
+
+
+MultimodalEncodingCt = Callable[..., MultimodalEncoding]

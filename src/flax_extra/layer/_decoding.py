@@ -9,8 +9,6 @@ Array = jnp.ndarray
 
 EmbeddingDecodingFn = Callable[[Array], Array]
 EmbeddingDecodingCt = Callable[..., EmbeddingDecodingFn]
-DecodingFn = Callable[[Array], Array]
-DecodingCt = Callable[..., DecodingFn]
 PostprocessingFn = Callable[[Array], Array]
 PostprocessingCt = Callable[..., PostprocessingFn]
 
@@ -66,3 +64,6 @@ class Decoding(nn.Module):
         # Postprocess.
         postprocessed_outputs = self.postprocessing()(decoded_outputs)
         return postprocessed_outputs
+
+
+DecodingCt = Callable[..., Decoding]

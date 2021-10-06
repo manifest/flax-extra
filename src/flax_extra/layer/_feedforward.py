@@ -38,7 +38,7 @@ class FeedForward(nn.Module):
         a tensor of the same shape as the input tensor.
     """
 
-    widening_factor: int = 4
+    widening_factor: int = 1
     r"""determines a hidden dimension of the layer as a product of
     the inputs dimension by the factor value."""
 

@@ -2,9 +2,9 @@ r"""The Perceiver processor."""
 
 from typing import Any, Optional
 from functools import partial
-from redex import combinator as cb
 import jax.numpy as jnp
 from flax import linen as nn
+from flax_extra import combinator as cb
 from flax_extra.layer._feedforward import FeedForward, FeedForwardCt
 from flax_extra.layer._attention import SelfAttention, SelfAttentionCt
 from flax_extra.model.perceiver._self_attention_block import SelfAttentionBlock

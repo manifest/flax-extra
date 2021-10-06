@@ -51,6 +51,8 @@ setup(
         # f"redex @ file://localhost//{Path('../redex').resolve()}#egg=redex",
         "redex>=0.1",
         "flax>=0.3",
+        # Support new JAX custom PRNG key system.
+        # "flax @ git+ssh://git@github.com/google/flax@6444f97ef2b363dbef9c834f093516f7e99bb05c#egg=flax",
         "einops>=0.3",
         # Required by `flax.training.checkpoints`
         "tensorflow>=2.6",
