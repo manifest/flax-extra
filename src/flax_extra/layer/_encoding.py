@@ -10,11 +10,11 @@ Array = jnp.ndarray
 Positions = List[int]
 
 PreprocessingFn = Callable[[Array], Array]
-PreprocessingCt = Callable[[], PreprocessingFn]
+PreprocessingCt = Callable[..., PreprocessingFn]
 PositionalEncodingFn = Callable[[int, Optional[Positions]], Array]
-PositionalEncodingCt = Callable[[], PositionalEncodingFn]
+PositionalEncodingCt = Callable[..., PositionalEncodingFn]
 EncodingFn = Callable[[Array, Optional[Positions]], Array]
-EncodingCt = Callable[[], EncodingFn]
+EncodingCt = Callable[..., EncodingFn]
 BinaryOperator = Callable[[Array, Array], Array]
 
 
@@ -81,7 +81,7 @@ class Encoding(nn.Module):
         batch_size = inputs.shape[0]
 
         # Preprocess.
-        preprocessed_inputs = self.preprocessing()(inputs)  # type: ignore
+        preprocessed_inputs = self.preprocessing()(inputs)
 
         # Reshape to a single feature dimension.
         d_preprocessed_inputs = preprocessed_inputs.shape[-1]
