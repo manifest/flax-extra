@@ -62,7 +62,7 @@ jobs:
 
       - name: Check code syntax
         run: |
-          pip install pylint
+          pip install "pylint==2.10"
           pip install -e .
           pylint -d fixme --unsafe-load-any-extension=y --min-similarity-lines=100 --output-format=colorized "src"
         # TODO, FIXME, and other similar warnings are disabled.
