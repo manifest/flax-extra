@@ -5,8 +5,8 @@ import jax
 from jax import numpy as jnp
 from jax.core import NamedShape
 from jax.random import KeyArray
-from redex import combinator as cb
 from flax import linen as nn
+from flax_extra import combinator as cb
 
 Array = jnp.ndarray
 Shape = Optional[Union[Sequence[int], NamedShape]]

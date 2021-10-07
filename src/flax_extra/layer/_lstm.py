@@ -1,8 +1,8 @@
 r"""LSTM layer."""
 
-from redex import combinator as cb
 from flax import linen as nn
 from flax.linen.recurrent import Array
+from flax_extra import combinator as cb
 
 LSTMState = tuple[Array, Array]
 

@@ -3,7 +3,7 @@ r"""RNN language model."""
 from typing import Callable
 from flax import linen as nn
 from flax.linen.recurrent import Array
-from redex import combinator as cb
+from flax_extra import combinator as cb
 from flax_extra import layer as xn
 from flax_extra import operator as xp
 
