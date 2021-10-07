@@ -40,10 +40,10 @@ class SelfAttentionBlock(nn.Module):
     """
 
     attention: SelfAttentionCt = SelfAttention
-    r"""a type of the self-attention layer."""
+    r"""a type of the self-attention."""
 
     feed_forward: FeedForwardCt = FeedForward
-    r"""a type of the feed-forward layer."""
+    r"""a type of the feed-forward."""
 
     dropout_rate: float = 0.0
     r"""probababilistic rate for dropout."""
