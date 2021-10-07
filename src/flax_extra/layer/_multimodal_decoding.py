@@ -64,7 +64,7 @@ class MultimodalDecoding(nn.Module):
         EmbeddingDecodingCt,
         lambda: cb.identity(n_in=1),
     )
-    r"""a constructor for a embedding decoder module
+    r"""a type of the embedding decoder
     (e.g. :class:`flax_extra.layer.EmbedDecoding` or
     :class:`flax.linen.Dense`)."""
 

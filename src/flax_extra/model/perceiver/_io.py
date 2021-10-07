@@ -110,19 +110,19 @@ class PerceiverIO(nn.Module):
     See :class:`flax_extra.model.perceiver.Processor`."""
 
     processor_attention: SelfAttentionCt = SelfAttention
-    r"""a type of the self-attention layer for processor.
+    r"""a type of the self-attention for processor.
     See :class:`flax_extra.layer.SelfAttention`."""
 
     processor_feed_forward: FeedForwardCt = FeedForward
-    r"""a type of the feed-forward layer for processor.
+    r"""a type of the feed-forward for processor.
     See :class:`flax_extra.layer.FeedForward`."""
 
     encoder_attention: KVQAttentionCt = KVQAttention
-    r"""a type of the cross-attention layer for encoder.
+    r"""a type of the cross-attention for encoder.
     See :class:`flax_extra.layer.KVQAttention`."""
 
     encoder_feed_forward: FeedForwardCt = FeedForward
-    r"""a type of the feed-forward layer for encoder.
+    r"""a type of the feed-forward for encoder.
     See :class:`flax_extra.layer.FeedForward`."""
 
     use_encoder_q_residual: bool = True
@@ -132,11 +132,11 @@ class PerceiverIO(nn.Module):
     and latents are pixels)."""
 
     decoder_attention: KVQAttentionCt = KVQAttention
-    r"""a type of the cross-attention layer for decoder.
+    r"""a type of the cross-attention for decoder.
     See :class:`flax_extra.layer.KVQAttention`."""
 
     decoder_feed_forward: FeedForwardCt = FeedForward
-    r"""a type of the feed-forward layer for decoder.
+    r"""a type of the feed-forward for decoder.
     See :class:`flax_extra.layer.FeedForward`."""
 
     use_decoder_q_residual: bool = False

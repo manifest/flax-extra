@@ -43,10 +43,10 @@ class Encoder(nn.Module):
     """
 
     attention: KVQAttentionCt = KVQAttention
-    r"""a type of the cross-attention layer."""
+    r"""a type of the cross-attention."""
 
     feed_forward: FeedForwardCt = FeedForward
-    r"""a type of the feed-forward layer."""
+    r"""a type of the feed-forward."""
 
     dropout_rate: float = 0.0
     r"""probababilistic rate for dropout."""

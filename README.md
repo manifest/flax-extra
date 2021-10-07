@@ -16,4 +16,4 @@ Extras include:
     - [Tensorboard](https://www.tensorflow.org/tensorboard) integration.
 - Additional linen modules.
 
-Check out [introductory tutorials](https://flax-extra.readthedocs.io/en/latest/notebooks/intro/) or go straight for the [documentation](https://flax-extra.readthedocs.io).
+Check out [introductory tutorials](https://flax-extra.readthedocs.io/en/latest/#getting-started) or go straight for the [documentation](https://flax-extra.readthedocs.io).

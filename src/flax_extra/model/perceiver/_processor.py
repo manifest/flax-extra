@@ -44,10 +44,10 @@ class Processor(nn.Module):
     r"""a number of self-attention blocks building up a single shard."""
 
     attention: SelfAttentionCt = SelfAttention
-    r"""a type of the self-attention layer."""
+    r"""a type of the self-attention."""
 
     feed_forward: FeedForwardCt = FeedForward
-    r"""a type of the feed-forward layer."""
+    r"""a type of the feed-forward."""
 
     dropout_rate: float = 0.0
     r"""probababilistic rate for dropout."""

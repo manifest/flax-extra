@@ -63,7 +63,7 @@ class Encoding(nn.Module):
     and returns the preprocessed inputs as a single output."""
 
     positional_encoding: Optional[PositionalEncodingCt] = None
-    r"""a constructor for a positional encoding module (e.g.
+    r"""a type of the positional encoding (e.g.
     :class:`flax_extra.layer.TrainablePositionalEncoding`
     or :class:`flax_extra.layer.FourierPositionEncoding`)."""
 
