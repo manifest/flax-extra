@@ -16,4 +16,8 @@ Extras include:
     - [Tensorboard](https://www.tensorflow.org/tensorboard) integration.
 - Additional linen modules.
 
-Check out [introductory tutorials](https://flax-extra.readthedocs.io/en/latest/#getting-started) or go straight for the [documentation](https://flax-extra.readthedocs.io).
+Check out [documentation](https://flax-extra.readthedocs.io), introductory tutorials, or examples that include:
+- [Perceiver IO](https://arxiv.org/abs/2107.14795)
+    - [Classification model](https://flax-extra.readthedocs.io/en/latest/notebooks/perceiver_classification/example) pretrained on images from [ImageNet](https://ieeexplore.ieee.org/document/5206848).
+    - [Masked-language model](https://flax-extra.readthedocs.io/en/latest/notebooks/perceiver_language_modeling/example) pretrained using a large text corpus obtained by combining [English Wikipedia and C4](https://arxiv.org/abs/1910.10683).
+    - [Autoencoder model](https://flax-extra.readthedocs.io/en/latest/notebooks/perceiver_autoencoding/example) pretrained on multimodal input (audio, video, and label) of the [Kinetics-700-2020](https://arxiv.org/abs/2010.10864) dataset.
